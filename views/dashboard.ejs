@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WithHer - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: #fff5f8;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+        }
+        .navbar-brand {
+            color: white !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .nav-link {
+            color: white !important;
+        }
+        .welcome-section {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 0 0 30px 30px;
+        }
+        .feature-card {
+            border: none;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            color: inherit;
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .feature-card h5 {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .feature-card p {
+            font-size: 0.85rem;
+            color: #888;
+            margin: 0;
+        }
+        .card-symptom { background: #fff0f5; border-left: 4px solid #ff6b9d; }
+        .card-education { background: #f0f5ff; border-left: 4px solid #6b9dff; }
+        .card-clinic { background: #f0fff5; border-left: 4px solid #6bffa0; }
+        .card-sos { background: #fff5f0; border-left: 4px solid #ff9d6b; }
+        .card-forum { background: #f5f0ff; border-left: 4px solid #9d6bff; }
+        .sos-btn {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(255,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand">WithHer 💗</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile"><i class="bi bi-person"></i> Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Welcome Section -->
+    <div class="welcome-section text-center">
+        <h2>Hello, <%= userName %> 💗</h2>
+        <p>You are not alone. WithHer is here for you.</p>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="container mt-4">
+        <div class="row g-4">
+
+            <!-- Symptom Checker -->
+            <div class="col-6 col-md-4">
+                <a href="/symptoms" class="feature-card card-symptom">
+                    <div class="feature-icon">🤖</div>
+                    <h5>Symptom Checker</h5>
+                    <p>Check your symptoms with AI</p>
+                </a>
+            </div>
+
+            <!-- Education Hub -->
+            <div class="col-6 col-md-4">
+                <a href="/education" class="feature-card card-education">
+                    <div class="feature-icon">📚</div>
+                    <h5>Education Hub</h5>
+                    <p>Learn about your health</p>
+                </a>
+            </div>
+
+            <!-- Clinic Locator -->
+            <div class="col-6 col-md-4">
+                <a href="/clinics" class="feature-card card-clinic">
+                    <div class="feature-icon">📍</div>
+                    <h5>Find a Clinic</h5>
+                    <p>Locate nearby facilities</p>
+                </a>
+            </div>
+
+            <!-- Forum -->
+            <div class="col-6 col-md-4">
+                <a href="/forum" class="feature-card card-forum">
+                    <div class="feature-icon">💬</div>
+                    <h5>Community</h5>
+                    <p>Talk anonymously with others</p>
+                </a>
+            </div>
+
+            <!-- Health Tips -->
+            <div class="col-6 col-md-4">
+                <a href="/education" class="feature-card card-education">
+                    <div class="feature-icon">💡</div>
+                    <h5>Health Tips</h5>
+                    <p>Daily reproductive health tips</p>
+                </a>
+            </div>
+
+            <!-- My History -->
+            <div class="col-6 col-md-4">
+                <a href="/history" class="feature-card card-symptom">
+                    <div class="feature-icon">📋</div>
+                    <h5>My History</h5>
+                    <p>View past symptom checks</p>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Emergency SOS Button -->
+        <div class="text-center mt-5 mb-5">
+            <p class="text-muted mb-3">In an emergency?</p>
+            <a href="/sos" class="btn sos-btn">
+                🚨 Emergency SOS
+            </a>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

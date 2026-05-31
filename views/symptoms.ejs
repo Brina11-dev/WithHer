@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WithHer - Symptom Checker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: #fff5f8;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+        }
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+        .page-header {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 0 0 30px 30px;
+            text-align: center;
+        }
+        .symptom-box {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    overflow: visible;
+    margin-bottom: 20px;
+}
+        
+        .check-symptoms-btn {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        .check-symptoms-btn:hover {
+            opacity: 0.9;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+            text-decoration: none;
+        }
+        .check-symptoms-btn:active,
+        .check-symptoms-btn:focus {
+            outline: none;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+            text-decoration: none;
+        }
+        .result-box {
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        .result-low { background: #f0fff5; border-left: 5px solid #28a745; }
+        .result-medium { background: #fffbf0; border-left: 5px solid #ffc107; }
+        .result-high { background: #fff0f0; border-left: 5px solid #dc3545; }
+        .risk-badge-low { background: #28a745; color: white; padding: 5px 15px; border-radius: 20px; }
+        .risk-badge-medium { background: #ffc107; color: white; padding: 5px 15px; border-radius: 20px; }
+        .risk-badge-high { background: #dc3545; color: white; padding: 5px 15px; border-radius: 20px; }
+        textarea {
+            border-radius: 10px;
+            border: 2px solid #ffccd5;
+            padding: 15px;
+        }
+        textarea:focus {
+            border-color: #ff6b9d;
+            box-shadow: none;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner-border {
+            color: #ff6b9d;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">WithHer 💗</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="page-header">
+        <h3>🤖 AI Symptom Checker</h3>
+        <p>Describe how you feel and get instant guidance</p>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center" style="overflow: visible !important;">
+            <div class="col-md-8" style="overflow: visible !important;">
+
+                <!-- Important Notice -->
+                <div class="alert alert-warning rounded-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong> Important:</strong> This tool provides guidance only. Always consult a doctor for medical advice.
+                </div>
+
+               <div class="symptom-box">
+                    <h5 class="mb-3">How are you feeling?</h5>
+                    <textarea 
+                        class="form-control mb-3" 
+                        id="symptoms" 
+                        rows="5" 
+                        placeholder="Describe your symptoms here... For example: I have been having lower abdominal pain for 3 days, missed my period, and feeling dizzy..."
+                        required></textarea>
+                    <button type="button" onclick="submitSymptoms()" class="check-symptoms-btn">
+                        <i class="bi bi-robot"></i> Check My Symptoms
+                    </button>
+
+                    <!-- Loading -->
+                    <div class="loading" id="loading">
+                        <div class="spinner-border" role="status"></div>
+                        <p class="mt-2 text-muted">Analysing your symptoms...</p>
+                    </div>
+
+                    <!-- Result -->
+                    <div id="result"></div>
+                </div>
+
+                <!-- Quick Symptom Suggestions -->
+                <div class="symptom-box mt-4">
+                    <h6 class="mb-3">Common concerns — tap to select:</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="fillSymptom('Lower abdominal pain and missed period')">Lower abdominal pain</button>
+                        <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="fillSymptom('Abnormal bleeding for more than 2 weeks')">Abnormal bleeding</button>
+                        <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="fillSymptom('Painful periods with heavy bleeding')">Painful periods</button>
+                        <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="fillSymptom('Unusual discharge and itching')">Unusual discharge</button>
+                        <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="fillSymptom('Pelvic pain and fever')">Pelvic pain and fever</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function fillSymptom(text) {
+            document.getElementById('symptoms').value = text;
+        }
+
+        async function submitSymptoms() {
+            const symptoms = document.getElementById('symptoms').value;
+            if (!symptoms) return alert('Please describe your symptoms first');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+
+            loading.style.display = 'block';
+            result.innerHTML = '';
+
+            try {
+                const response = await fetch('/symptoms/check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ symptoms })
+                });
+
+                const data = await response.json();
+                loading.style.display = 'none';
+
+                const riskClass = {
+                    'low': 'result-low',
+                    'medium': 'result-medium', 
+                    'high': 'result-high'
+                }[data.risk_level];
+
+                const badgeClass = {
+                    'low': 'risk-badge-low',
+                    'medium': 'risk-badge-medium',
+                    'high': 'risk-badge-high'
+                }[data.risk_level];
+
+                const riskEmoji = {
+                    'low': '🟢',
+                    'medium': '🟡',
+                    'high': '🔴'
+                }[data.risk_level];
+
+                result.innerHTML = `
+                    <div class="result-box ${riskClass}">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">${riskEmoji} Assessment Result</h5>
+                            <span class="${badgeClass}">${data.risk_level.toUpperCase()} RISK</span>
+                        </div>
+                        <p>${data.response}</p>
+                        ${data.risk_level === 'high' ? `
+                            <a href="/sos" class="btn btn-danger rounded-pill mt-2">
+                                🚨 Get Emergency Help Now
+                            </a>
+                        ` : ''}
+                        ${data.risk_level === 'medium' ? `
+                            <a href="/clinics" class="btn btn-warning rounded-pill mt-2">
+                                📍 Find a Clinic Near You
+                            </a>
+                        ` : ''}
+                    </div>
+                `;
+            } catch(err) {
+                loading.style.display = 'none';
+                result.innerHTML = '<div class="alert alert-danger">Something went wrong. Please try again.</div>';
+            }
+        };
+    </script>
+</body>
+</html>

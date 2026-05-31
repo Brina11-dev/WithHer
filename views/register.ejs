@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WithHer - Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px;
+        }
+        .logo {
+            color: #c44569;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card p-4">
+                    <div class="text-center mb-4">
+                        <div class="logo">WithHer 💗</div>
+                        <p class="text-muted">Because SheMatters</p>
+                    </div>
+
+                    <% if(error) { %>
+                        <div class="alert alert-danger"><%= error %></div>
+                    <% } %>
+
+                    <form action="/register" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name" class="form-control" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" name="phone" class="form-control" placeholder="07XXXXXXXX" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email (Optional)</label>
+                            <input type="email" name="email" class="form-control" placeholder="Enter your email">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">County</label>
+                            <select name="county" class="form-control">
+                                <option value="">Select County</option>
+                                <option>Nairobi</option>
+                                <option>Mombasa</option>
+                                <option>Kisumu</option>
+                                <option>Nakuru</option>
+                                <option>Kakamega</option>
+                                <option>Bungoma</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Age</label>
+                            <input type="number" name="age" class="form-control" placeholder="Your age" min="10" max="80">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" placeholder="Create a password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" name="confirm_password" class="form-control" placeholder="Repeat your password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" name="remember_me" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <p>Already have an account? <a href="/login" style="color: #c44569;">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
