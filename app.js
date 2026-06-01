@@ -28,8 +28,67 @@ app.set('views', path.join(__dirname, 'views'));
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const symptomRoutes = require('./routes/symptomRoutes');
+const forumRoutes = require('./routes/forumRoutes');
+const sosRoutes = require('./routes/sosRoutes');
 app.use('/', authRoutes);
 app.use('/', symptomRoutes);
+app.use('/', forumRoutes);
+app.use('/', sosRoutes);
+
+
+app.get('/education', (req, res) => {
+  if (!req.session.userId) return res.redirect('/login');
+  res.render('education');
+});
+// History route
+app.get('/history', (req, res) => {
+  if (!req.session.userId) return res.redirect('/login');
+  res.render('history');
+});
+// Health Tips route
+// Health Tips route
+app.get('/tips', (req, res) => {
+  if (!req.session.userId) return res.redirect('/login');
+  res.render('tips');
+});
+// History data route
+app.get('/history/data', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+  const db = require('./config/db');
+  db.query(
+    'SELECT * FROM symptom_checks WHERE user_id = ? ORDER BY created_at DESC',
+    [req.session.userId],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: 'Could not load history' });
+      res.json(results);
+    }
+  );
+});
+// Profile route
+app.get('/profile', (req, res) => {
+    if (!req.session.userId) return res.redirect('/login');
+    const db = require('./config/db');
+
+    db.query('SELECT * FROM users WHERE id = ?', [req.session.userId], (err, users) => {
+        if (err) return res.redirect('/dashboard');
+        const user = users[0];
+
+        db.query('SELECT COUNT(*) as count FROM symptom_checks WHERE user_id = ?', [req.session.userId], (err, s) => {
+            db.query('SELECT COUNT(*) as count FROM forum_posts WHERE user_id = ?', [req.session.userId], (err, f) => {
+                db.query('SELECT COUNT(*) as count FROM emergency_contacts WHERE user_id = ?', [req.session.userId], (err, e) => {
+                    res.render('profile', {
+                        user,
+                        stats: {
+                            symptomChecks: s[0].count,
+                            forumPosts: f[0].count,
+                            emergencyContacts: e[0].count
+                        }
+                    });
+                });
+            });
+        });
+    });
+});
 
 // Home route
 app.get('/', (req, res) => {

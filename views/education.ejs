@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WithHer - Education Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #fff5f8; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background: linear-gradient(135deg, #ff6b9d, #c44569); }
+        .navbar-brand, .nav-link { color: white !important; }
+        .page-header {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 0 0 30px 30px;
+            text-align: center;
+        }
+        .article-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .article-card:hover { transform: translateY(-3px); }
+        .article-card .category-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .badge-urgent { background: #ffe0e0; color: #cc0000; }
+        .badge-common { background: #fff0e0; color: #cc6600; }
+        .badge-general { background: #e0f0ff; color: #0066cc; }
+        .badge-prevention { background: #e0ffe0; color: #006600; }
+        .article-card h5 { color: #333; margin: 10px 0 8px; }
+        .article-card p { color: #777; font-size: 0.9rem; margin: 0; }
+        .article-card .read-more { color: #ff6b9d; font-size: 0.85rem; margin-top: 10px; display: block; }
+        .modal-header { background: linear-gradient(135deg, #ff6b9d, #c44569); color: white; }
+        .modal-header .btn-close { filter: brightness(0) invert(1); }
+        .search-box {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 20px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .filter-btn {
+            border: 2px solid #ffccd5;
+            color: #ff6b9d;
+            border-radius: 20px;
+            padding: 5px 15px;
+            background: white;
+            font-size: 0.85rem;
+            margin: 3px;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            border-color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">WithHer 💗</a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="bi bi-house"></i> Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h3>📚 Education Hub</h3>
+        <p>Know your body. Know your rights. Stay informed.</p>
+    </div>
+
+    <div class="container mt-4 pb-5">
+
+        <!-- Search -->
+        <div class="search-box">
+            <input type="text" class="form-control" id="searchInput"
+                placeholder="🔍 Search articles..." oninput="filterArticles()">
+        </div>
+
+        <!-- Filter buttons -->
+        <div class="mb-3">
+            <button class="filter-btn active" onclick="filterByCategory('all', this)">All</button>
+            <button class="filter-btn" onclick="filterByCategory('urgent', this)">🚨 Urgent</button>
+            <button class="filter-btn" onclick="filterByCategory('common', this)">⚠️ Common</button>
+            <button class="filter-btn" onclick="filterByCategory('general', this)">💡 General</button>
+            <button class="filter-btn" onclick="filterByCategory('prevention', this)">🛡️ Prevention</button>
+        </div>
+
+        <!-- Articles -->
+        <div id="articlesContainer"></div>
+
+    </div>
+
+    <!-- Article Modal -->
+    <div class="modal fade" id="articleModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+                <div class="modal-footer">
+                    <a href="/symptoms" class="btn btn-danger rounded-pill">🤖 Check My Symptoms</a>
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const articles = [
+            {
+                id: 1,
+                title: "Ectopic Pregnancy — What Every Woman Must Know",
+                category: "urgent",
+                badge: "badge-urgent",
+                label: "🚨 Urgent",
+                summary: "An ectopic pregnancy is a life-threatening emergency. Learn the warning signs before it's too late.",
+                content: `
+                    <h6>What is an Ectopic Pregnancy?</h6>
+                    <p>Normally, a fertilized egg travels to the uterus and implants there. In an ectopic pregnancy, the egg implants somewhere else — usually in the fallopian tube. The egg cannot survive there, and if left untreated, the tube can rupture causing life-threatening internal bleeding.</p>
+
+                    <h6>⚠️ Warning Signs</h6>
+                    <ul>
+                        <li>Sharp or stabbing pain on one side of the lower abdomen</li>
+                        <li>Missed period or unusual bleeding</li>
+                        <li>Dizziness, fainting or weakness</li>
+                        <li>Shoulder tip pain (a sign of internal bleeding)</li>
+                        <li>Pain that gets worse with movement</li>
+                    </ul>
+
+                    <h6>🚨 When to Seek Emergency Care IMMEDIATELY</h6>
+                    <p>If you have severe abdominal pain, feel faint, or have heavy vaginal bleeding — <strong>go to hospital immediately</strong>. This is a life-threatening emergency.</p>
+
+                    <h6>Who is at Risk?</h6>
+                    <ul>
+                        <li>Previous pelvic infections or STIs</li>
+                        <li>Previous ectopic pregnancy</li>
+                        <li>Previous pelvic or abdominal surgery</li>
+                        <li>Endometriosis</li>
+                        <li>Smoking</li>
+                    </ul>
+
+                    <h6>💡 Remember</h6>
+                    <p>Many women with ectopic pregnancies have no known risk factors. Any woman who is pregnant or could be pregnant and experiences sudden pelvic pain should seek medical attention immediately.</p>
+                `
+            },
+            {
+                id: 2,
+                title: "Abnormal Bleeding — When Should You Worry?",
+                category: "urgent",
+                badge: "badge-urgent",
+                label: "🚨 Urgent",
+                summary: "Bleeding for weeks or months is not normal. Learn what your body is trying to tell you.",
+                content: `
+                    <h6>What is Abnormal Uterine Bleeding?</h6>
+                    <p>Abnormal uterine bleeding includes any bleeding that is heavier than usual, lasts longer than 7 days, happens between periods, or occurs after menopause.</p>
+
+                    <h6>⚠️ Warning Signs</h6>
+                    <ul>
+                        <li>Bleeding that lasts more than 7 days</li>
+                        <li>Soaking more than one pad per hour for several hours</li>
+                        <li>Bleeding between periods</li>
+                        <li>Bleeding after sex</li>
+                        <li>Bleeding after menopause</li>
+                        <li>Severe cramping with bleeding</li>
+                    </ul>
+
+                    <h6>Possible Causes</h6>
+                    <ul>
+                        <li>Hormonal imbalance</li>
+                        <li>Fibroids or polyps</li>
+                        <li>Infection (PID)</li>
+                        <li>Thyroid problems</li>
+                        <li>In rare cases — cancer</li>
+                    </ul>
+
+                    <h6>💡 What To Do</h6>
+                    <p>Do not ignore prolonged bleeding. Visit a clinic for an examination. Many causes are treatable when caught early. Fear and financial concerns should not stop you from seeking help — many public hospitals in Kenya offer subsidized care.</p>
+                `
+            },
+            {
+                id: 3,
+                title: "Pelvic Inflammatory Disease (PID)",
+                category: "common",
+                badge: "badge-common",
+                label: "⚠️ Common",
+                summary: "PID is a common infection that can cause serious long-term damage if left untreated.",
+                content: `
+                    <h6>What is PID?</h6>
+                    <p>Pelvic Inflammatory Disease (PID) is an infection of the female reproductive organs — including the uterus, fallopian tubes, and ovaries. It is usually caused by bacteria spreading from the vagina.</p>
+
+                    <h6>⚠️ Symptoms</h6>
+                    <ul>
+                        <li>Lower abdominal or pelvic pain</li>
+                        <li>Unusual vaginal discharge</li>
+                        <li>Fever and chills</li>
+                        <li>Pain during sex</li>
+                        <li>Burning sensation when urinating</li>
+                        <li>Irregular periods</li>
+                    </ul>
+
+                    <h6>Why It Matters</h6>
+                    <p>Untreated PID can lead to ectopic pregnancy, infertility, and chronic pelvic pain. Many women with PID have mild or no symptoms — which is why regular check-ups are important.</p>
+
+                    <h6>💊 Treatment</h6>
+                    <p>PID is treated with antibiotics. The sooner treatment begins, the better the outcome. Always complete the full course of treatment even if you feel better.</p>
+                `
+            },
+            {
+                id: 4,
+                title: "STIs — What You Need to Know",
+                category: "common",
+                badge: "badge-common",
+                label: "⚠️ Common",
+                summary: "Sexually transmitted infections are common, treatable, and nothing to be ashamed of.",
+                content: `
+                    <h6>Common STIs in Kenya</h6>
+                    <ul>
+                        <li><strong>Chlamydia</strong> — often has no symptoms but can cause PID and infertility</li>
+                        <li><strong>Gonorrhea</strong> — unusual discharge, burning urination</li>
+                        <li><strong>Syphilis</strong> — sores, rash, can affect the heart and brain if untreated</li>
+                        <li><strong>HIV</strong> — weakens the immune system; manageable with ARVs</li>
+                        <li><strong>HPV</strong> — can cause cervical cancer; vaccine available</li>
+                    </ul>
+
+                    <h6>⚠️ Signs to Watch For</h6>
+                    <ul>
+                        <li>Unusual discharge (color, smell, amount)</li>
+                        <li>Sores, bumps or rashes in the genital area</li>
+                        <li>Burning or pain when urinating</li>
+                        <li>Pelvic pain</li>
+                        <li>Many STIs have NO symptoms — regular testing is important</li>
+                    </ul>
+
+                    <h6>💡 Remember</h6>
+                    <p>Getting an STI does not make you a bad person. Many are easily treated. What matters is getting tested and treated early. You can visit any public health clinic in Kenya confidentially.</p>
+                `
+            },
+            {
+                id: 5,
+                title: "Understanding Your Menstrual Cycle",
+                category: "general",
+                badge: "badge-general",
+                label: "💡 General",
+                summary: "Know what is normal and what is not when it comes to your period.",
+                content: `
+                    <h6>What is a Normal Period?</h6>
+                    <ul>
+                        <li>Cycle length: 21 to 35 days</li>
+                        <li>Period duration: 2 to 7 days</li>
+                        <li>Flow: light to moderate (changing pads every 3-6 hours)</li>
+                        <li>Color: ranges from bright red to dark brown</li>
+                        <li>Mild cramping is normal</li>
+                    </ul>
+
+                    <h6>⚠️ Signs Something May Be Wrong</h6>
+                    <ul>
+                        <li>Period lasting more than 7 days</li>
+                        <li>Soaking a pad every hour for several hours</li>
+                        <li>Severe cramping that stops daily activities</li>
+                        <li>Bleeding between periods</li>
+                        <li>No period for 3+ months (when not pregnant)</li>
+                        <li>Very irregular cycles</li>
+                    </ul>
+
+                    <h6>💡 Tracking Your Cycle</h6>
+                    <p>Track your period on a calendar or app. This helps you notice changes early and gives doctors important information when you seek care.</p>
+                `
+            },
+            {
+                id: 6,
+                title: "How to Protect Your Reproductive Health",
+                category: "prevention",
+                badge: "badge-prevention",
+                label: "🛡️ Prevention",
+                summary: "Simple steps every woman can take to protect her reproductive health.",
+                content: `
+                    <h6>Regular Check-ups</h6>
+                    <p>Visit a clinic at least once a year for a reproductive health check-up, even if you feel fine. Many conditions have no symptoms in early stages.</p>
+
+                    <h6>🛡️ Prevention Tips</h6>
+                    <ul>
+                        <li>Get tested for STIs regularly if sexually active</li>
+                        <li>Use protection (condoms) consistently</li>
+                        <li>Get the HPV vaccine if you haven't already</li>
+                        <li>Seek treatment for any infection promptly — don't wait</li>
+                        <li>Avoid douching — it disrupts healthy vaginal bacteria</li>
+                        <li>Eat a balanced diet and stay hydrated</li>
+                        <li>Manage stress — it affects your hormones and cycle</li>
+                    </ul>
+
+                    <h6>💊 Cervical Cancer Screening</h6>
+                    <p>Women aged 25 and above should get a Pap smear every 3-5 years. Cervical cancer is preventable when caught early. Most public hospitals in Kenya offer this service at low cost.</p>
+
+                    <h6>💡 Know Your Body</h6>
+                    <p>Pay attention to changes in your body. You know yourself best. If something feels wrong — it probably is. Trust yourself and seek help early.</p>
+                `
+            },
+            {
+                id: 7,
+                title: "Endometriosis — The Silent Condition",
+                category: "common",
+                badge: "badge-common",
+                label: "⚠️ Common",
+                summary: "Millions of women suffer from endometriosis without knowing it. Learn the signs.",
+                content: `
+                    <h6>What is Endometriosis?</h6>
+                    <p>Endometriosis is a condition where tissue similar to the lining of the uterus grows outside it — on the ovaries, fallopian tubes, or other organs. It affects 1 in 10 women of reproductive age.</p>
+                    <h6>⚠️ Symptoms</h6>
+                    <ul>
+                        <li>Very painful periods — pain that stops your daily activities</li>
+                        <li>Pain during or after sex</li>
+                        <li>Pain when urinating or passing stool during periods</li>
+                        <li>Heavy periods or bleeding between periods</li>
+                        <li>Difficulty getting pregnant</li>
+                        <li>Fatigue, bloating, nausea during periods</li>
+                    </ul>
+                    <h6>💡 Important</h6>
+                    <p>Painful periods are NOT normal. Many women are told their pain is normal and suffer for years. If your period pain is severe — seek medical attention. Endometriosis is manageable when diagnosed early.</p>
+                `
+            },
+            {
+                id: 8,
+                title: "PCOS — Polycystic Ovary Syndrome",
+                category: "common",
+                badge: "badge-common",
+                label: "⚠️ Common",
+                summary: "PCOS affects 1 in 5 women. Many don't know they have it.",
+                content: `
+                    <h6>What is PCOS?</h6>
+                    <p>PCOS is a hormonal condition where the ovaries produce excess male hormones. It affects periods, fertility, weight, and skin.</p>
+                    <h6>⚠️ Symptoms</h6>
+                    <ul>
+                        <li>Irregular or missed periods</li>
+                        <li>Excess hair on face, chest or back</li>
+                        <li>Acne or oily skin</li>
+                        <li>Weight gain especially around the waist</li>
+                        <li>Thinning hair on the head</li>
+                        <li>Difficulty getting pregnant</li>
+                        <li>Dark patches on skin (neck, armpits, groin)</li>
+                    </ul>
+                    <h6>💊 Treatment</h6>
+                    <p>PCOS has no cure but is very manageable. Lifestyle changes (diet, exercise), medication, and regular monitoring can greatly improve quality of life. See a doctor if you notice these signs.</p>
+                `
+            },
+            {
+                id: 9,
+                title: "Maternal Health During Pregnancy",
+                category: "general",
+                badge: "badge-general",
+                label: "💡 General",
+                summary: "What every pregnant woman in Kenya needs to know to stay safe.",
+                content: `
+                    <h6>Antenatal Care (ANC)</h6>
+                    <p>Every pregnant woman should attend at least 8 antenatal visits. These visits monitor the health of both mother and baby and catch complications early.</p>
+                    <h6>⚠️ Danger Signs During Pregnancy</h6>
+                    <ul>
+                        <li>Heavy vaginal bleeding</li>
+                        <li>Severe headache or blurred vision</li>
+                        <li>Swelling of face, hands or feet</li>
+                        <li>High fever</li>
+                        <li>Baby not moving as usual after 28 weeks</li>
+                        <li>Severe abdominal pain</li>
+                        <li>Difficulty breathing</li>
+                    </ul>
+                    <h6>💡 In Kenya</h6>
+                    <p>Antenatal care is free at all public health facilities in Kenya. Do not miss your visits. If you notice any danger signs — go to hospital immediately, do not wait.</p>
+                `
+            },
+            {
+                id: 10,
+                title: "Family Planning Options",
+                category: "general",
+                badge: "badge-general",
+                label: "💡 General",
+                summary: "Know your options. Family planning is your right.",
+                content: `
+                    <h6>Common Family Planning Methods in Kenya</h6>
+                    <ul>
+                        <li><strong>Contraceptive pills</strong> — taken daily, very effective</li>
+                        <li><strong>Injection (Depo-Provera)</strong> — given every 3 months</li>
+                        <li><strong>Implant</strong> — inserted under the skin, lasts 3-5 years</li>
+                        <li><strong>IUD (coil)</strong> — inserted in uterus, lasts 5-10 years</li>
+                        <li><strong>Condoms</strong> — also protect against STIs</li>
+                        <li><strong>Emergency contraception</strong> — within 72 hours of unprotected sex</li>
+                    </ul>
+                    <h6>💡 Important</h6>
+                    <p>Family planning services are available at all public health facilities in Kenya — many are free or subsidized. You have the right to choose your method. A healthcare provider can help you decide what is best for your body and lifestyle.</p>
+                `
+            },
+            {
+                id: 11,
+                title: "Mental Health and Reproductive Health",
+                category: "general",
+                badge: "badge-general",
+                label: "💡 General",
+                summary: "Your mental health and reproductive health are deeply connected.",
+                content: `
+                    <h6>The Connection</h6>
+                    <p>Hormonal changes throughout your cycle, pregnancy, and menopause can significantly affect your mood and mental health. This is real — not weakness.</p>
+                    <h6>Common Mental Health Challenges</h6>
+                    <ul>
+                        <li><strong>PMS/PMDD</strong> — mood changes, anxiety, depression before periods</li>
+                        <li><strong>Postpartum depression</strong> — depression after giving birth</li>
+                        <li><strong>Anxiety from reproductive health concerns</strong> — fear of diagnosis, infertility stress</li>
+                        <li><strong>Trauma</strong> — from pregnancy loss, difficult births, or assault</li>
+                    </ul>
+                    <h6>💡 You Are Not Alone</h6>
+                    <p>Seek support from a trusted person, counselor, or doctor. Talking helps. Kenya has mental health services available at many hospitals. Your feelings are valid and help is available.</p>
+                `
+            },
+            {
+                id: 12,
+                title: "Nutrition and Reproductive Health",
+                category: "prevention",
+                badge: "badge-prevention",
+                label: "🛡️ Prevention",
+                summary: "What you eat directly affects your reproductive health.",
+                content: `
+                    <h6>Key Nutrients for Reproductive Health</h6>
+                    <ul>
+                        <li><strong>Iron</strong> — prevents anaemia from heavy periods. Found in beans, meat, spinach, kale</li>
+                        <li><strong>Folic acid</strong> — essential before and during pregnancy. Found in leafy greens, eggs</li>
+                        <li><strong>Calcium</strong> — supports hormone balance. Found in milk, fish, leafy greens</li>
+                        <li><strong>Zinc</strong> — supports fertility and immune health. Found in meat, nuts, seeds</li>
+                        <li><strong>Vitamin D</strong> — affects hormone production. Get sunlight daily</li>
+                    </ul>
+                    <h6>💡 Simple Tips</h6>
+                    <ul>
+                        <li>Eat a variety of vegetables daily — sukuma wiki, spinach, managu</li>
+                        <li>Reduce sugar and processed foods — they worsen hormonal imbalances</li>
+                        <li>Drink enough water — at least 8 glasses a day</li>
+                        <li>Exercise regularly — even a 30 minute walk daily helps</li>
+                    </ul>
+                `
+            },
+            {
+                id: 13,
+                title: "Afya ya Uzazi — Kwa Kiswahili",
+                category: "general",
+                badge: "badge-general",
+                label: "💡 Kiswahili",
+                summary: "Habari muhimu kuhusu afya yako ya uzazi kwa lugha ya Kiswahili.",
+                content: `
+                    <h6>Mimba ya Nje ya Mji wa Uzazi (Ectopic Pregnancy)</h6>
+                    <p>Mimba ya nje ya mji wa uzazi ni hali hatari sana. Dalili ni pamoja na maumivu makali upande mmoja wa tumbo, kutokwa na damu isiyo ya kawaida, na kizunguzungu. Nenda hospitalini HARAKA ukiona dalili hizi.</p>
+
+                    <h6>Kutokwa na Damu Kupita Kiasi</h6>
+                    <p>Kutokwa na damu kwa zaidi ya siku 7, au kutokwa na damu kati ya hedhi, si kawaida. Tembelea kliniki ukiona dalili hizi.</p>
+
+                    <h6>Usisahau</h6>
+                    <ul>
+                        <li>Pumzika vizuri na kula vyakula bora</li>
+                        <li>Tembelea kliniki angalau mara moja kwa mwaka</li>
+                        <li>Usiogope kutafuta msaada — afya yako ni muhimu</li>
+                        <li>Hospitali za serikali zinatoa huduma za afya ya uzazi bila malipo mengi</li>
+                    </ul>
+
+                    <h6>💗 Kumbuka</h6>
+                    <p>Hujapoteza. WithHer ipo pamoja nawe. Usikae peke yako na maumivu — tafuta msaada leo.</p>
+                `
+            }
+        ];
+
+        let currentCategory = 'all';
+
+        function renderArticles(filteredArticles) {
+            const container = document.getElementById('articlesContainer');
+            if (filteredArticles.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted py-4">No articles found.</div>';
+                return;
+            }
+            container.innerHTML = filteredArticles.map(article => `
+                <div class="article-card" onclick="openArticle(${article.id})" data-category="${article.category}">
+                    <span class="category-badge ${article.badge}">${article.label}</span>
+                    <h5>${article.title}</h5>
+                    <p>${article.summary}</p>
+                    <span class="read-more">Read more →</span>
+                </div>
+            `).join('');
+        }
+
+        function openArticle(id) {
+            const article = articles.find(a => a.id === id);
+            document.getElementById('modalTitle').innerHTML = article.title;
+            document.getElementById('modalBody').innerHTML = article.content;
+            new bootstrap.Modal(document.getElementById('articleModal')).show();
+        }
+
+        function filterByCategory(category, btn) {
+            currentCategory = category;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterArticles();
+        }
+
+        function filterArticles() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = articles;
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(a => a.category === currentCategory);
+            }
+            if (search) {
+                filtered = filtered.filter(a =>
+                    a.title.toLowerCase().includes(search) ||
+                    a.summary.toLowerCase().includes(search)
+                );
+            }
+            renderArticles(filtered);
+        }
+
+        // Load articles on page load
+        renderArticles(articles);
+    </script>
+</body>
+</html>

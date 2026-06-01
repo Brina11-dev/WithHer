@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WithHer - My Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #fff5f8; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background: linear-gradient(135deg, #ff6b9d, #c44569); }
+        .navbar-brand, .nav-link { color: white !important; }
+        .profile-header {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 0 0 30px 30px;
+            text-align: center;
+        }
+        .avatar {
+            width: 90px;
+            height: 90px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2.5rem;
+        }
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .info-row {
+            padding: 12px 0;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #888; font-size: 0.85rem; }
+        .info-value { color: #333; font-weight: 500; }
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #ff6b9d; }
+        .stat-label { color: #888; font-size: 0.85rem; }
+        .btn-pink {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            width: 100%;
+        }
+        .btn-pink:hover { opacity: 0.9; color: white; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">WithHer 💗</a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="bi bi-house"></i> Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="profile-header">
+        <div class="avatar">👩</div>
+        <h4><%= user.full_name %></h4>
+        <p style="opacity: 0.8;">Member since <%= new Date(user.created_at).toLocaleDateString('en-KE', { month: 'long', year: 'numeric' }) %></p>
+    </div>
+
+    <div class="container mt-4 pb-5">
+
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+            <div class="col-4">
+                <div class="stat-card">
+                    <div class="stat-number"><%= stats.symptomChecks %></div>
+                    <div class="stat-label">Symptom Checks</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-card">
+                    <div class="stat-number"><%= stats.forumPosts %></div>
+                    <div class="stat-label">Forum Posts</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-card">
+                    <div class="stat-number"><%= stats.emergencyContacts %></div>
+                    <div class="stat-label">SOS Contacts</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="profile-card">
+            <h6 class="mb-3">👤 My Information</h6>
+            <div class="info-row">
+                <span class="info-label">Full Name</span>
+                <span class="info-value"><%= user.full_name %></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Phone</span>
+                <span class="info-value"><%= user.phone %></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value"><%= user.email || 'Not provided' %></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">County</span>
+                <span class="info-value"><%= user.county || 'Not provided' %></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Age</span>
+                <span class="info-value"><%= user.age || 'Not provided' %></span>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="profile-card">
+            <h6 class="mb-3">⚡ Quick Actions</h6>
+            <div class="d-grid gap-2">
+                <a href="/symptoms" class="btn btn-outline-danger rounded-pill">🤖 Check Symptoms</a>
+                <a href="/history" class="btn btn-outline-danger rounded-pill">📋 View My History</a>
+                <a href="/sos" class="btn btn-outline-danger rounded-pill">🚨 Manage SOS Contacts</a>
+                <a href="/logout" class="btn btn-outline-secondary rounded-pill">🚪 Logout</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

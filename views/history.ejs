@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WithHer - My History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #fff5f8; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background: linear-gradient(135deg, #ff6b9d, #c44569); }
+        .navbar-brand, .nav-link { color: white !important; }
+        .page-header {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 0 0 30px 30px;
+            text-align: center;
+        }
+        .history-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+        .risk-low { border-left: 5px solid #28a745; }
+        .risk-medium { border-left: 5px solid #ffc107; }
+        .risk-high { border-left: 5px solid #dc3545; }
+        .badge-low { background: #28a745; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+        .badge-medium { background: #ffc107; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+        .badge-high { background: #dc3545; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+        .symptoms-text { color: #555; font-style: italic; margin: 10px 0; }
+        .ai-response { color: #444; font-size: 0.9rem; background: #f9f9f9; padding: 10px; border-radius: 10px; }
+        .date-text { color: #aaa; font-size: 0.8rem; }
+        .stats-box {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .stat-item { padding: 10px; }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #ff6b9d; }
+        .stat-label { color: #888; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">WithHer 💗</a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="bi bi-house"></i> Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h3>📋 My Health History</h3>
+        <p>Track your symptom checks over time</p>
+    </div>
+
+    <div class="container mt-4 pb-5">
+
+        <!-- Stats -->
+        <div class="stats-box">
+            <div class="row">
+                <div class="col-4 stat-item">
+                    <div class="stat-number" id="totalChecks">0</div>
+                    <div class="stat-label">Total Checks</div>
+                </div>
+                <div class="col-4 stat-item">
+                    <div class="stat-number" style="color: #ffc107;" id="mediumCount">0</div>
+                    <div class="stat-label">Medium Risk</div>
+                </div>
+                <div class="col-4 stat-item">
+                    <div class="stat-number" style="color: #dc3545;" id="highCount">0</div>
+                    <div class="stat-label">High Risk</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History List -->
+        <div id="historyContainer">
+            <div class="text-center text-muted py-4">
+                <div class="spinner-border" style="color: #ff6b9d;" role="status"></div>
+                <p class="mt-2">Loading your history...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        window.onload = loadHistory;
+
+        async function loadHistory() {
+            try {
+                const response = await fetch('/history/data');
+                const checks = await response.json();
+                displayHistory(checks);
+                updateStats(checks);
+            } catch(err) {
+                document.getElementById('historyContainer').innerHTML =
+                    '<div class="alert alert-danger">Could not load history.</div>';
+            }
+        }
+
+        function updateStats(checks) {
+            document.getElementById('totalChecks').textContent = checks.length;
+            document.getElementById('mediumCount').textContent =
+                checks.filter(c => c.risk_level === 'medium').length;
+            document.getElementById('highCount').textContent =
+                checks.filter(c => c.risk_level === 'high').length;
+        }
+
+        function displayHistory(checks) {
+            const container = document.getElementById('historyContainer');
+
+            if (checks.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-clipboard-heart" style="font-size: 3rem; color: #ffccd5;"></i>
+                        <p class="mt-2">No symptom checks yet.</p>
+                        <a href="/symptoms" class="btn btn-outline-danger rounded-pill mt-2">
+                            🤖 Check My Symptoms
+                        </a>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = checks.map(check => `
+                <div class="history-card risk-${check.risk_level}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge-${check.risk_level}">${check.risk_level.toUpperCase()} RISK</span>
+                        <span class="date-text">${new Date(check.created_at).toLocaleDateString('en-KE', {
+                            day: 'numeric', month: 'short', year: 'numeric',
+                            hour: '2-digit', minute: '2-digit'
+                        })}</span>
+                    </div>
+                    <p class="symptoms-text mt-2">"${check.symptoms}"</p>
+                    <div class="ai-response">${check.ai_response}</div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
