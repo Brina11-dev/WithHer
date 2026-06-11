@@ -6,11 +6,19 @@ const showRegister = (req, res) => {
   res.render('register', { error: null });
 };
 
-// Handle register form
 const register = (req, res) => {
   const { full_name, phone, email, password, confirm_password, age, county, remember_me } = req.body;
 
-  // Check passwords match
+  // Server-side validation
+  if (!/^[a-zA-Z\s]{2,}$/.test(full_name)) {
+    return res.render('register', { error: 'Name must contain letters only' });
+  }
+  if (!/^(07|01)\d{8}$/.test(phone)) {
+    return res.render('register', { error: 'Phone must be 10 digits starting with 07 or 01' });
+  }
+  if (password.length < 8 || !/\d/.test(password)) {
+    return res.render('register', { error: 'Password must be at least 8 characters and contain a number' });
+  }
   if (password !== confirm_password) {
     return res.render('register', { error: 'Passwords do not match' });
   }
@@ -18,28 +26,26 @@ const register = (req, res) => {
   // Check if phone already exists
   db.query('SELECT * FROM users WHERE phone = ?', [phone], (err, results) => {
     if (err) return res.render('register', { error: 'Something went wrong' });
-
     if (results.length > 0) {
       return res.render('register', { error: 'Phone number already registered' });
     }
 
-    // Encrypt password
     const hashedPassword = bcrypt.hashSync(password, 10);
 
-    // Save user to database
     db.query(
       'INSERT INTO users (full_name, phone, email, password, age, county) VALUES (?, ?, ?, ?, ?, ?)',
       [full_name, phone, email, hashedPassword, age, county],
       (err, result) => {
         if (err) return res.render('register', { error: 'Registration failed' });
 
-        // Save session
         req.session.userId = result.insertId;
         req.session.userName = full_name;
 
-        // Remember me cookie
         if (remember_me) {
-          res.cookie('remember_me', result.insertId, { maxAge: 30 * 24 * 60 * 60 * 1000 });
+          res.cookie('remember_me', result.insertId, { 
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            httpOnly: true 
+          });
         }
 
         res.redirect('/dashboard');

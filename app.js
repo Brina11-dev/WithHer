@@ -21,6 +21,23 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
 
+// Auto-login from remember me cookie
+app.use((req, res, next) => {
+  if (!req.session.userId && req.cookies.remember_me) {
+    const userId = req.cookies.remember_me;
+    const db = require('./config/db');
+    db.query('SELECT * FROM users WHERE id = ?', [userId], (err, results) => {
+      if (!err && results.length > 0) {
+        req.session.userId = results[0].id;
+        req.session.userName = results[0].full_name;
+      }
+      next();
+    });
+  } else {
+    next();
+  }
+});
+
 // View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -45,7 +62,8 @@ app.get('/history', (req, res) => {
   if (!req.session.userId) return res.redirect('/login');
   res.render('history');
 });
-// Health Tips route
+
+
 // Health Tips route
 app.get('/tips', (req, res) => {
   if (!req.session.userId) return res.redirect('/login');
@@ -64,6 +82,7 @@ app.get('/history/data', (req, res) => {
     }
   );
 });
+
 // Profile route
 app.get('/profile', (req, res) => {
     if (!req.session.userId) return res.redirect('/login');
