@@ -113,9 +113,18 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="modalBody"></div>
-                <div class="modal-footer">
-                    <a href="/symptoms" class="btn btn-danger rounded-pill">🤖 Check My Symptoms</a>
-                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer flex-column align-items-stretch">
+                    <div id="webSearchResults" class="mb-2" style="display:none;">
+                        <p style="color: #c44569; font-weight: bold;">🌐 Web Results</p>
+                        <div id="searchResultsList"></div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-danger rounded-pill" onclick="searchWeb()" id="searchWebBtn">
+                            🌐 Search Web
+                        </button>
+                        <a href="/symptoms" class="btn btn-danger rounded-pill">🤖 Check My Symptoms</a>
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -134,7 +143,6 @@
                 content: `
                     <h6>What is an Ectopic Pregnancy?</h6>
                     <p>Normally, a fertilized egg travels to the uterus and implants there. In an ectopic pregnancy, the egg implants somewhere else — usually in the fallopian tube. The egg cannot survive there, and if left untreated, the tube can rupture causing life-threatening internal bleeding.</p>
-
                     <h6>⚠️ Warning Signs</h6>
                     <ul>
                         <li>Sharp or stabbing pain on one side of the lower abdomen</li>
@@ -143,10 +151,8 @@
                         <li>Shoulder tip pain (a sign of internal bleeding)</li>
                         <li>Pain that gets worse with movement</li>
                     </ul>
-
                     <h6>🚨 When to Seek Emergency Care IMMEDIATELY</h6>
                     <p>If you have severe abdominal pain, feel faint, or have heavy vaginal bleeding — <strong>go to hospital immediately</strong>. This is a life-threatening emergency.</p>
-
                     <h6>Who is at Risk?</h6>
                     <ul>
                         <li>Previous pelvic infections or STIs</li>
@@ -155,7 +161,6 @@
                         <li>Endometriosis</li>
                         <li>Smoking</li>
                     </ul>
-
                     <h6>💡 Remember</h6>
                     <p>Many women with ectopic pregnancies have no known risk factors. Any woman who is pregnant or could be pregnant and experiences sudden pelvic pain should seek medical attention immediately.</p>
                 `
@@ -170,7 +175,6 @@
                 content: `
                     <h6>What is Abnormal Uterine Bleeding?</h6>
                     <p>Abnormal uterine bleeding includes any bleeding that is heavier than usual, lasts longer than 7 days, happens between periods, or occurs after menopause.</p>
-
                     <h6>⚠️ Warning Signs</h6>
                     <ul>
                         <li>Bleeding that lasts more than 7 days</li>
@@ -180,7 +184,6 @@
                         <li>Bleeding after menopause</li>
                         <li>Severe cramping with bleeding</li>
                     </ul>
-
                     <h6>Possible Causes</h6>
                     <ul>
                         <li>Hormonal imbalance</li>
@@ -189,9 +192,8 @@
                         <li>Thyroid problems</li>
                         <li>In rare cases — cancer</li>
                     </ul>
-
                     <h6>💡 What To Do</h6>
-                    <p>Do not ignore prolonged bleeding. Visit a clinic for an examination. Many causes are treatable when caught early. Fear and financial concerns should not stop you from seeking help — many public hospitals in Kenya offer subsidized care.</p>
+                    <p>Do not ignore prolonged bleeding. Visit a clinic for an examination. Many causes are treatable when caught early.</p>
                 `
             },
             {
@@ -204,7 +206,6 @@
                 content: `
                     <h6>What is PID?</h6>
                     <p>Pelvic Inflammatory Disease (PID) is an infection of the female reproductive organs — including the uterus, fallopian tubes, and ovaries. It is usually caused by bacteria spreading from the vagina.</p>
-
                     <h6>⚠️ Symptoms</h6>
                     <ul>
                         <li>Lower abdominal or pelvic pain</li>
@@ -214,12 +215,10 @@
                         <li>Burning sensation when urinating</li>
                         <li>Irregular periods</li>
                     </ul>
-
                     <h6>Why It Matters</h6>
-                    <p>Untreated PID can lead to ectopic pregnancy, infertility, and chronic pelvic pain. Many women with PID have mild or no symptoms — which is why regular check-ups are important.</p>
-
+                    <p>Untreated PID can lead to ectopic pregnancy, infertility, and chronic pelvic pain.</p>
                     <h6>💊 Treatment</h6>
-                    <p>PID is treated with antibiotics. The sooner treatment begins, the better the outcome. Always complete the full course of treatment even if you feel better.</p>
+                    <p>PID is treated with antibiotics. The sooner treatment begins, the better the outcome.</p>
                 `
             },
             {
@@ -238,7 +237,6 @@
                         <li><strong>HIV</strong> — weakens the immune system; manageable with ARVs</li>
                         <li><strong>HPV</strong> — can cause cervical cancer; vaccine available</li>
                     </ul>
-
                     <h6>⚠️ Signs to Watch For</h6>
                     <ul>
                         <li>Unusual discharge (color, smell, amount)</li>
@@ -247,9 +245,8 @@
                         <li>Pelvic pain</li>
                         <li>Many STIs have NO symptoms — regular testing is important</li>
                     </ul>
-
                     <h6>💡 Remember</h6>
-                    <p>Getting an STI does not make you a bad person. Many are easily treated. What matters is getting tested and treated early. You can visit any public health clinic in Kenya confidentially.</p>
+                    <p>Getting an STI does not make you a bad person. Many are easily treated. What matters is getting tested and treated early.</p>
                 `
             },
             {
@@ -268,7 +265,6 @@
                         <li>Color: ranges from bright red to dark brown</li>
                         <li>Mild cramping is normal</li>
                     </ul>
-
                     <h6>⚠️ Signs Something May Be Wrong</h6>
                     <ul>
                         <li>Period lasting more than 7 days</li>
@@ -278,9 +274,8 @@
                         <li>No period for 3+ months (when not pregnant)</li>
                         <li>Very irregular cycles</li>
                     </ul>
-
                     <h6>💡 Tracking Your Cycle</h6>
-                    <p>Track your period on a calendar or app. This helps you notice changes early and gives doctors important information when you seek care.</p>
+                    <p>Track your period on a calendar or app. This helps you notice changes early.</p>
                 `
             },
             {
@@ -292,8 +287,7 @@
                 summary: "Simple steps every woman can take to protect her reproductive health.",
                 content: `
                     <h6>Regular Check-ups</h6>
-                    <p>Visit a clinic at least once a year for a reproductive health check-up, even if you feel fine. Many conditions have no symptoms in early stages.</p>
-
+                    <p>Visit a clinic at least once a year for a reproductive health check-up, even if you feel fine.</p>
                     <h6>🛡️ Prevention Tips</h6>
                     <ul>
                         <li>Get tested for STIs regularly if sexually active</li>
@@ -304,12 +298,8 @@
                         <li>Eat a balanced diet and stay hydrated</li>
                         <li>Manage stress — it affects your hormones and cycle</li>
                     </ul>
-
                     <h6>💊 Cervical Cancer Screening</h6>
-                    <p>Women aged 25 and above should get a Pap smear every 3-5 years. Cervical cancer is preventable when caught early. Most public hospitals in Kenya offer this service at low cost.</p>
-
-                    <h6>💡 Know Your Body</h6>
-                    <p>Pay attention to changes in your body. You know yourself best. If something feels wrong — it probably is. Trust yourself and seek help early.</p>
+                    <p>Women aged 25 and above should get a Pap smear every 3-5 years. Most public hospitals in Kenya offer this service at low cost.</p>
                 `
             },
             {
@@ -321,7 +311,7 @@
                 summary: "Millions of women suffer from endometriosis without knowing it. Learn the signs.",
                 content: `
                     <h6>What is Endometriosis?</h6>
-                    <p>Endometriosis is a condition where tissue similar to the lining of the uterus grows outside it — on the ovaries, fallopian tubes, or other organs. It affects 1 in 10 women of reproductive age.</p>
+                    <p>Endometriosis is a condition where tissue similar to the lining of the uterus grows outside it. It affects 1 in 10 women of reproductive age.</p>
                     <h6>⚠️ Symptoms</h6>
                     <ul>
                         <li>Very painful periods — pain that stops your daily activities</li>
@@ -332,7 +322,7 @@
                         <li>Fatigue, bloating, nausea during periods</li>
                     </ul>
                     <h6>💡 Important</h6>
-                    <p>Painful periods are NOT normal. Many women are told their pain is normal and suffer for years. If your period pain is severe — seek medical attention. Endometriosis is manageable when diagnosed early.</p>
+                    <p>Painful periods are NOT normal. If your period pain is severe — seek medical attention. Endometriosis is manageable when diagnosed early.</p>
                 `
             },
             {
@@ -356,7 +346,7 @@
                         <li>Dark patches on skin (neck, armpits, groin)</li>
                     </ul>
                     <h6>💊 Treatment</h6>
-                    <p>PCOS has no cure but is very manageable. Lifestyle changes (diet, exercise), medication, and regular monitoring can greatly improve quality of life. See a doctor if you notice these signs.</p>
+                    <p>PCOS has no cure but is very manageable. Lifestyle changes, medication, and regular monitoring can greatly improve quality of life.</p>
                 `
             },
             {
@@ -380,7 +370,7 @@
                         <li>Difficulty breathing</li>
                     </ul>
                     <h6>💡 In Kenya</h6>
-                    <p>Antenatal care is free at all public health facilities in Kenya. Do not miss your visits. If you notice any danger signs — go to hospital immediately, do not wait.</p>
+                    <p>Antenatal care is free at all public health facilities in Kenya. Do not miss your visits.</p>
                 `
             },
             {
@@ -401,7 +391,7 @@
                         <li><strong>Emergency contraception</strong> — within 72 hours of unprotected sex</li>
                     </ul>
                     <h6>💡 Important</h6>
-                    <p>Family planning services are available at all public health facilities in Kenya — many are free or subsidized. You have the right to choose your method. A healthcare provider can help you decide what is best for your body and lifestyle.</p>
+                    <p>Family planning services are available at all public health facilities in Kenya — many are free or subsidized.</p>
                 `
             },
             {
@@ -418,11 +408,11 @@
                     <ul>
                         <li><strong>PMS/PMDD</strong> — mood changes, anxiety, depression before periods</li>
                         <li><strong>Postpartum depression</strong> — depression after giving birth</li>
-                        <li><strong>Anxiety from reproductive health concerns</strong> — fear of diagnosis, infertility stress</li>
+                        <li><strong>Anxiety from reproductive health concerns</strong></li>
                         <li><strong>Trauma</strong> — from pregnancy loss, difficult births, or assault</li>
                     </ul>
                     <h6>💡 You Are Not Alone</h6>
-                    <p>Seek support from a trusted person, counselor, or doctor. Talking helps. Kenya has mental health services available at many hospitals. Your feelings are valid and help is available.</p>
+                    <p>Seek support from a trusted person, counselor, or doctor. Kenya has mental health services available at many hospitals.</p>
                 `
             },
             {
@@ -444,7 +434,7 @@
                     <h6>💡 Simple Tips</h6>
                     <ul>
                         <li>Eat a variety of vegetables daily — sukuma wiki, spinach, managu</li>
-                        <li>Reduce sugar and processed foods — they worsen hormonal imbalances</li>
+                        <li>Reduce sugar and processed foods</li>
                         <li>Drink enough water — at least 8 glasses a day</li>
                         <li>Exercise regularly — even a 30 minute walk daily helps</li>
                     </ul>
@@ -460,10 +450,8 @@
                 content: `
                     <h6>Mimba ya Nje ya Mji wa Uzazi (Ectopic Pregnancy)</h6>
                     <p>Mimba ya nje ya mji wa uzazi ni hali hatari sana. Dalili ni pamoja na maumivu makali upande mmoja wa tumbo, kutokwa na damu isiyo ya kawaida, na kizunguzungu. Nenda hospitalini HARAKA ukiona dalili hizi.</p>
-
                     <h6>Kutokwa na Damu Kupita Kiasi</h6>
                     <p>Kutokwa na damu kwa zaidi ya siku 7, au kutokwa na damu kati ya hedhi, si kawaida. Tembelea kliniki ukiona dalili hizi.</p>
-
                     <h6>Usisahau</h6>
                     <ul>
                         <li>Pumzika vizuri na kula vyakula bora</li>
@@ -471,7 +459,6 @@
                         <li>Usiogope kutafuta msaada — afya yako ni muhimu</li>
                         <li>Hospitali za serikali zinatoa huduma za afya ya uzazi bila malipo mengi</li>
                     </ul>
-
                     <h6>💗 Kumbuka</h6>
                     <p>Hujapoteza. WithHer ipo pamoja nawe. Usikae peke yako na maumivu — tafuta msaada leo.</p>
                 `
@@ -479,6 +466,7 @@
         ];
 
         let currentCategory = 'all';
+        let currentArticleTitle = '';
 
         function renderArticles(filteredArticles) {
             const container = document.getElementById('articlesContainer');
@@ -498,8 +486,11 @@
 
         function openArticle(id) {
             const article = articles.find(a => a.id === id);
+            currentArticleTitle = article.title;
             document.getElementById('modalTitle').innerHTML = article.title;
             document.getElementById('modalBody').innerHTML = article.content;
+            document.getElementById('webSearchResults').style.display = 'none';
+            document.getElementById('searchResultsList').innerHTML = '';
             new bootstrap.Modal(document.getElementById('articleModal')).show();
         }
 
@@ -525,8 +516,70 @@
             renderArticles(filtered);
         }
 
-        // Load articles on page load
-        renderArticles(articles);
+        async function searchWeb() {
+            const btn = document.getElementById('searchWebBtn');
+            btn.innerHTML = '🔄 Searching...';
+            btn.disabled = true;
+            
+
+            try {
+                const res = await fetch(`/education/search?query=${encodeURIComponent(currentArticleTitle)}`);
+                const data = await res.json();
+
+                const resultsDiv = document.getElementById('searchResultsList');
+                if (data.results && data.results.length > 0) {
+                    resultsDiv.innerHTML = data.results.map(r => `
+                        <div class="mb-2 p-2" style="background: #fff5f8; border-radius: 10px;">
+                            <a href="${r.link}" target="_blank" style="color: #c44569; font-weight: bold; font-size: 0.9rem;">${r.title}</a>
+                            <p style="font-size: 0.8rem; color: #777; margin: 4px 0 0;">${r.snippet}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    resultsDiv.innerHTML = '<p class="text-muted">No results found.</p>';
+                }
+                document.getElementById('webSearchResults').style.display = 'block';
+            } catch(err) {
+                document.getElementById('searchResultsList').innerHTML = '<p class="text-danger">Search failed. Try again.</p>';
+                document.getElementById('webSearchResults').style.display = 'block';
+            }
+
+            btn.innerHTML = '🌐 Search Web';
+            btn.disabled = false;
+        }
+
+        async function init() {
+            renderArticles(articles);
+
+            try {
+                const res = await fetch('/education/recommended');
+                const data = await res.json();
+
+                if (data.keywords && data.keywords.length > 0) {
+                    const recommended = articles.filter(a => data.keywords.includes(a.id));
+                    if (recommended.length > 0) {
+                        const recDiv = document.createElement('div');
+                        recDiv.innerHTML = `
+                            <div class="mb-3 p-3" style="background: #fff0f5; border-radius: 15px; border-left: 4px solid #ff6b9d;">
+                                <p class="mb-2" style="color: #c44569; font-weight: bold;">💗 Recommended for You</p>
+                                <p class="mb-2" style="color: #777; font-size: 0.85rem;">Based on your recent symptom check</p>
+                                ${recommended.map(a => `
+                                    <div class="article-card mb-2" onclick="openArticle(${a.id})" style="padding: 15px;">
+                                        <span class="category-badge ${a.badge}">${a.label}</span>
+                                        <h5 style="font-size: 1rem;">${a.title}</h5>
+                                        <p style="font-size: 0.85rem;">${a.summary}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        document.getElementById('articlesContainer').prepend(recDiv);
+                    }
+                }
+            } catch(err) {
+                console.log('No recommendations available');
+            }
+        }
+
+        init();
     </script>
 </body>
 </html>
