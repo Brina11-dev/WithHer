@@ -115,9 +115,13 @@
                 <div class="modal-body" id="modalBody"></div>
                 <div class="modal-footer flex-column align-items-stretch">
                     <div id="webSearchResults" class="mb-2" style="display:none;">
-                        <p style="color: #c44569; font-weight: bold;">🌐 Web Results</p>
-                        <div id="searchResultsList"></div>
-                    </div>
+                 <p style="color: #c44569; font-weight: bold;">🌐 Web Results</p>
+                 <div class="alert alert-warning py-2 px-3 mb-2" style="font-size: 0.8rem; border-radius: 10px;">
+                   ⚠️ <strong>Disclaimer:</strong> Results are from external sources (WHO, NHS, Mayo Clinic, Wikipedia). 
+                     Always consult a qualified doctor for medical advice. WithHer is not responsible for third-party content.
+              </div>
+            <div id="searchResultsList"></div>
+      </div>
                     <div class="d-flex gap-2">
                         <button class="btn btn-outline-danger rounded-pill" onclick="searchWeb()" id="searchWebBtn">
                             🌐 Search Web
@@ -529,11 +533,13 @@
                 const resultsDiv = document.getElementById('searchResultsList');
                 if (data.results && data.results.length > 0) {
                     resultsDiv.innerHTML = data.results.map(r => `
-                        <div class="mb-2 p-2" style="background: #fff5f8; border-radius: 10px;">
-                            <a href="${r.link}" target="_blank" style="color: #c44569; font-weight: bold; font-size: 0.9rem;">${r.title}</a>
-                            <p style="font-size: 0.8rem; color: #777; margin: 4px 0 0;">${r.snippet}</p>
-                        </div>
-                    `).join('');
+                  <div class="mb-2 p-2" style="background: #fff5f8; border-radius: 10px;">
+               <span style="font-size: 0.7rem; background: #c44569; color: white; padding: 2px 8px; border-radius: 10px; margin-bottom: 4px; display: inline-block;">${r.source || 'Web'}</span>
+             <br>
+             <a href="${r.link}" target="_blank" style="color: #c44569; font-weight: bold; font-size: 0.9rem;">${r.title}</a>
+            <p style="font-size: 0.8rem; color: #777; margin: 4px 0 0;">${r.snippet}</p>
+           </div>
+        `).join('');
                 } else {
                     resultsDiv.innerHTML = '<p class="text-muted">No results found.</p>';
                 }
