@@ -196,6 +196,14 @@
                         <button class="like-btn" onclick="likePost(${post.id}, this)">
                             💗 Support (${post.likes || 0})
                         </button>
+                         ${!post.is_anonymous && post.user_id ? `
+        <a href="/messages?userId=${post.user_id}&name=${encodeURIComponent(post.full_name)}" 
+           style="background: none; border: 1px solid #ffccd5; color: #ff6b9d; 
+                  border-radius: 20px; padding: 3px 12px; font-size: 0.85rem; 
+                  text-decoration: none; cursor: pointer;">
+             Message
+        </a>
+    ` : ''}
                     </div>
                 </div>
             `;
