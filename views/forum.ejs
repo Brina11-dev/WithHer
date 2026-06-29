@@ -183,7 +183,10 @@
                         <span class="author">
                             ${post.is_anonymous
                                 ? '<span class="anonymous-badge">👤 Anonymous Sister</span>'
-                                : post.full_name}
+                                : `<a href="/messages?userId=${post.user_id}&name=${encodeURIComponent(post.full_name)}" 
+                               style="color: #ff6b9d; text-decoration: none;">
+                             ${post.full_name}
+                      </a>`}
                         </span>
                         <span class="time">${formatDate(post.created_at)}</span>
                     </div>

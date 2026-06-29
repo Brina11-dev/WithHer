@@ -44,7 +44,7 @@ const getPosts = (req, res) => {
         (err, symptomResults) => {
             // Get all posts regardless
             db.query(`
-                SELECT fp.id, fp.content, fp.is_anonymous, fp.created_at, fp.likes, fp.tags, u.full_name
+                SELECT fp.id, fp.user_id, fp.content, fp.is_anonymous, fp.created_at, fp.likes, fp.tags, u.full_name
                 FROM forum_posts fp
                 JOIN users u ON fp.user_id = u.id
                 ORDER BY fp.created_at DESC

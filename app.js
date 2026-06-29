@@ -273,8 +273,143 @@ app.get('/education/recommended', (req, res) => {
   );
 });
 
-// Start server
+const http = require('http');
+const { Server } = require('socket.io');
+
+const server = http.createServer(app);
+const io = new Server(server);
+
+// Track online users: { userId: socketId }
+const onlineUsers = {};
+
+io.on('connection', (socket) => {
+    // User comes online
+    socket.on('user_online', (userId) => {
+        onlineUsers[userId] = socket.id;
+    });
+
+    // Send a DM
+    socket.on('send_message', async (data) => {
+        const { senderId, receiverId, content } = data;
+
+        // Save to DB
+        db.query(
+            'INSERT INTO messages (sender_id, receiver_id, content) VALUES (?, ?, ?)',
+            [senderId, receiverId, content],
+            (err, result) => {
+                if (err) return;
+
+                const message = {
+                    id: result.insertId,
+                    sender_id: senderId,
+                    receiver_id: receiverId,
+                    content,
+                    created_at: new Date(),
+                    is_read: 0
+                };
+
+                // If receiver is online, deliver instantly
+                if (onlineUsers[receiverId]) {
+                    io.to(onlineUsers[receiverId]).emit('receive_message', message);
+                }
+
+                // Always confirm back to sender
+                socket.emit('message_sent', message);
+            }
+        );
+    });
+
+    // Mark messages as read
+    socket.on('mark_read', (data) => {
+        const { senderId, receiverId } = data;
+        db.query(
+            'UPDATE messages SET is_read = 1 WHERE sender_id = ? AND receiver_id = ? AND is_read = 0',
+            [senderId, receiverId]
+        );
+    });
+
+    // User goes offline
+    socket.on('disconnect', () => {
+        for (const [userId, sockId] of Object.entries(onlineUsers)) {
+            if (sockId === socket.id) {
+                delete onlineUsers[userId];
+                break;
+            }
+        }
+    });
+});
+
+// Message routes
+app.get('/messages/history/:otherUserId', (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+
+    const myId = req.session.userId;
+    const otherId = req.params.otherUserId;
+
+    db.query(`
+        SELECT m.*, 
+               u1.full_name as sender_name,
+               u2.full_name as receiver_name
+        FROM messages m
+        JOIN users u1 ON m.sender_id = u1.id
+        JOIN users u2 ON m.receiver_id = u2.id
+        WHERE (m.sender_id = ? AND m.receiver_id = ?)
+           OR (m.sender_id = ? AND m.receiver_id = ?)
+        ORDER BY m.created_at ASC
+    `, [myId, otherId, otherId, myId], (err, results) => {
+        if (err) return res.status(500).json({ error: 'Could not load messages' });
+        res.json(results);
+    });
+});
+
+// Get unread message count
+app.get('/messages/unread', (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+
+    db.query(
+        'SELECT COUNT(*) as count FROM messages WHERE receiver_id = ? AND is_read = 0',
+        [req.session.userId],
+        (err, results) => {
+            if (err) return res.status(500).json({ error: 'Error' });
+            res.json({ count: results[0].count });
+        }
+    );
+});
+
+app.get('/auth/me', (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+    res.json({ id: req.session.userId, name: req.session.userName });
+});
+
+app.get('/messages', (req, res) => {
+    if (!req.session.userId) return res.redirect('/login');
+    res.sendFile(path.join(__dirname, 'public/messages.html'));
+});
+
+// Get all conversations for a user
+app.get('/messages/conversations', (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+
+    const myId = req.session.userId;
+
+    db.query(`
+        SELECT 
+            u.id, u.full_name,
+            m.content as last_message,
+            m.created_at as last_time,
+            SUM(CASE WHEN m.is_read = 0 AND m.receiver_id = ? THEN 1 ELSE 0 END) as unread
+        FROM messages m
+        JOIN users u ON (u.id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END)
+        WHERE m.sender_id = ? OR m.receiver_id = ?
+        GROUP BY u.id, u.full_name, m.content, m.created_at
+        ORDER BY m.created_at DESC
+    `, [myId, myId, myId, myId], (err, results) => {
+        if (err) return res.status(500).json({ error: 'Error' });
+        res.json(results);
+    });
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`✅ WithHer running on http://localhost:${PORT}`);
+server.listen(PORT, () => {
+    console.log(`✅ WithHer running on http://localhost:${PORT}`);
 });
