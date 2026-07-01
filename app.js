@@ -19,6 +19,31 @@ global.createNotification = createNotification;
 
 const fetch = require('node-fetch');
 
+const multer = require('multer');
+
+// Multer storage config
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/uploads/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
+        cb(null, uniqueName);
+    }
+});
+
+const upload = multer({
+    storage,
+    limits: { fileSize: 20 * 1024 * 1024 }, // 20MB max
+    fileFilter: (req, file, cb) => {
+        const allowed = /jpeg|jpg|png|gif|webp|mp4|mov|avi|webm/;
+        const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+        const mime = allowed.test(file.mimetype);
+        if (ext && mime) return cb(null, true);
+        cb(new Error('Only images and videos are allowed'));
+    }
+});
+
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

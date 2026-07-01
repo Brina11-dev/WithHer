@@ -87,6 +87,44 @@
             width: 34px; height: 34px; cursor: pointer;
             display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
+        /* Media */
+        .post-media {
+            margin-top: 12px; border-radius: 12px;
+            overflow: hidden; max-height: 400px;
+        }
+        .post-media img {
+            width: 100%; max-height: 400px;
+            object-fit: cover; border-radius: 12px;
+        }
+        .post-media video {
+            width: 100%; max-height: 400px;
+            border-radius: 12px; background: #000;
+        }
+        /* Media preview in post box */
+        .media-preview {
+            margin-top: 10px; position: relative;
+            display: inline-block; max-width: 100%;
+        }
+        .media-preview img, .media-preview video {
+            max-height: 200px; max-width: 100%;
+            border-radius: 10px; display: block;
+        }
+        .media-preview .remove-media {
+            position: absolute; top: 6px; right: 6px;
+            background: rgba(0,0,0,0.5); color: white;
+            border: none; border-radius: 50%;
+            width: 24px; height: 24px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem;
+        }
+        .attach-btn {
+            background: none; border: 1px dashed #ffccd5;
+            color: #ff6b9d; border-radius: 10px;
+            padding: 8px 16px; font-size: 0.85rem;
+            cursor: pointer; margin-top: 10px;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .attach-btn:hover { background: #fff0f5; }
         /* Likes modal */
         .likes-modal-overlay {
             display: none; position: fixed; inset: 0;
@@ -99,7 +137,6 @@
             padding: 25px; width: 320px; max-height: 400px;
             overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
-        .likes-modal h6 { color: #c44569; font-weight: bold; margin-bottom: 15px; }
         .like-person {
             display: flex; align-items: center; gap: 10px;
             padding: 8px 0; border-bottom: 1px solid #fff5f8;
@@ -138,26 +175,45 @@
     </div>
 
     <div class="container mt-4 pb-5">
+
         <!-- Search Box -->
-       <div style="background:white; border-radius: 15px; padding: 12px 18px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 15px;
-            display: flex; align-items: center; gap: 10px;">
-           <i class="bi bi-search" style="color:#ff6b9d; font-size:1rem;"></i>
-           <input type="text" id="forumSearch" placeholder="Search posts by topic or keyword..."
-             style="border:none; outline:none; flex:1; font-size:0.9rem; background:transparent;"
-             oninput="searchPosts()">
-          <button onclick="clearSearch()" id="clearSearchBtn"
-          style="display:none; background:none; border:none; color:#aaa; cursor:pointer; font-size:0.85rem;">
-        ✕ Clear
-         </button>
-     </div>
+        <div style="background:white; border-radius:15px; padding:12px 18px;
+            box-shadow:0 3px 15px rgba(0,0,0,0.08); margin-bottom:15px;
+            display:flex; align-items:center; gap:10px;">
+            <i class="bi bi-search" style="color:#ff6b9d; font-size:1rem;"></i>
+            <input type="text" id="forumSearch" placeholder="Search posts by topic or keyword..."
+                style="border:none; outline:none; flex:1; font-size:0.9rem; background:transparent;"
+                oninput="searchPosts()">
+            <button onclick="clearSearch()" id="clearSearchBtn"
+                style="display:none; background:none; border:none; color:#aaa; cursor:pointer; font-size:0.85rem;">
+                ✕ Clear
+            </button>
+        </div>
+
+        <!-- New Post Box -->
         <div class="new-post-box">
             <h6 class="mb-3">💭 Share something or ask a question</h6>
             <textarea class="form-control" id="postContent" rows="3"
                 placeholder="What's on your mind? Ask a question, share your experience, or offer support..."></textarea>
-            <div class="form-check mt-2">
-                <input type="checkbox" class="form-check-input" id="isAnonymous" checked>
-                <label class="form-check-label text-muted" for="isAnonymous">Post anonymously (recommended)</label>
+
+            <!-- Media Preview -->
+            <div id="mediaPreview" class="media-preview" style="display:none;">
+                <div id="mediaPreviewContent"></div>
+                <button class="remove-media" onclick="removeMedia()">✕</button>
+            </div>
+
+            <!-- Bottom row: attach + anonymous + post -->
+            <div class="d-flex align-items-center justify-content-between mt-2 flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="attach-btn" onclick="document.getElementById('mediaInput').click()">
+                        <i class="bi bi-paperclip"></i> Photo/Video
+                    </button>
+                    <input type="file" id="mediaInput" accept="image/*,video/*" style="display:none;" onchange="previewMedia(this)">
+                </div>
+                <div class="form-check mb-0">
+                    <input type="checkbox" class="form-check-input" id="isAnonymous" checked>
+                    <label class="form-check-label text-muted" for="isAnonymous">Post anonymously</label>
+                </div>
             </div>
             <button class="btn-pink" onclick="submitPost()">
                 <i class="bi bi-send"></i> Post
@@ -166,7 +222,7 @@
 
         <div id="postsContainer">
             <div class="text-center text-muted py-4">
-                <div class="spinner-border" style="color: #ff6b9d;" role="status"></div>
+                <div class="spinner-border" style="color:#ff6b9d;" role="status"></div>
                 <p class="mt-2">Loading posts...</p>
             </div>
         </div>
@@ -199,12 +255,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        let allPostsData = null;
         window.onload = loadPosts;
 
         async function loadPosts() {
             try {
                 const response = await fetch('/forum/posts');
                 const data = await response.json();
+                allPostsData = data;
                 displayPosts(data);
             } catch(err) {
                 document.getElementById('postsContainer').innerHTML =
@@ -223,6 +281,26 @@
                 `<span class="tag-pill">#${t.trim()}</span>`
             ).join('') : '';
 
+            // Media rendering
+            let mediaHtml = '';
+            if (post.media_url) {
+                if (post.media_type === 'video') {
+                    mediaHtml = `
+                        <div class="post-media">
+                            <video controls>
+                                <source src="${post.media_url}" type="video/mp4">
+                            </video>
+                        </div>`;
+                } else {
+                    mediaHtml = `
+                        <div class="post-media">
+                            <img src="${post.media_url}" alt="Post image"
+                                onclick="window.open('${post.media_url}', '_blank')"
+                                style="cursor:zoom-in;">
+                        </div>`;
+                }
+            }
+
             return `
                 <div class="post-card ${isRelated ? 'related' : ''}" id="post-${post.id}">
                     <div class="d-flex justify-content-between align-items-center">
@@ -235,13 +313,13 @@
                         <span class="time">${formatDate(post.created_at)}</span>
                     </div>
                     <div class="content">${post.content}</div>
+                    ${mediaHtml}
                     ${tags ? `<div class="mt-1">${tags}</div>` : ''}
 
                     <div class="mt-2 d-flex align-items-center gap-2 flex-wrap">
-                       <button class="action-btn ${post.likes > 0 ? 'liked' : ''}" id="like-btn-${post.id}" onclick="likeAndShow(${post.id}, this)">
-                        💗 Support (${post.likes || 0})
-                          </button>
-                    
+                        <button class="action-btn ${post.likes > 0 ? 'liked' : ''}" id="like-btn-${post.id}" onclick="likeAndShow(${post.id}, this)">
+                            💗 Support (${post.likes || 0})
+                        </button>
                         <button class="action-btn" onclick="toggleComments(${post.id})">
                             💬 Comments
                         </button>
@@ -271,105 +349,129 @@
                 </div>
             `;
         }
-     let allPostsData = null;
 
-function searchPosts() {
-    const query = document.getElementById('forumSearch').value.toLowerCase().trim();
-    const clearBtn = document.getElementById('clearSearchBtn');
+        // Media preview
+        function previewMedia(input) {
+            const file = input.files[0];
+            if (!file) return;
 
-    clearBtn.style.display = query ? 'inline' : 'none';
+            const preview = document.getElementById('mediaPreview');
+            const content = document.getElementById('mediaPreviewContent');
+            const url = URL.createObjectURL(file);
 
-    if (!allPostsData) return;
-
-    if (!query) {
-        displayPosts(allPostsData);
-        return;
-    }
-
-    // Filter posts matching query in content or tags
-    const filtered = {
-        posts: (allPostsData.posts || []).filter(p =>
-            p.content.toLowerCase().includes(query) ||
-            (p.tags && p.tags.toLowerCase().includes(query))
-        ),
-        relatedPosts: []  // hide related section during search
-    };
-
-    const container = document.getElementById('postsContainer');
-
-    if (filtered.posts.length === 0) {
-        container.innerHTML = `
-            <div class="text-center text-muted py-4">
-                <i class="bi bi-search" style="font-size:2.5rem; color:#ffccd5;"></i>
-                <p class="mt-2">No posts found for "<strong>${query}</strong>"</p>
-                <p style="font-size:0.85rem;">Try a different keyword</p>
-            </div>`;
-        return;
-    }
-
-    container.innerHTML = `
-        <div class="mb-2">
-            <span class="section-label all">
-                🔍 ${filtered.posts.length} result${filtered.posts.length > 1 ? 's' : ''} for "${query}"
-            </span>
-        </div>
-        ${filtered.posts.map(p => renderPost(p, false)).join('')}
-    `;
-}
-
-function clearSearch() {
-    document.getElementById('forumSearch').value = '';
-    document.getElementById('clearSearchBtn').style.display = 'none';
-    if (allPostsData) displayPosts(allPostsData);
-}
-
-async function loadPosts() {
-    try {
-        const response = await fetch('/forum/posts');
-        const data = await response.json();
-        allPostsData = data; // save for search
-        displayPosts(data);
-    } catch(err) {
-        document.getElementById('postsContainer').innerHTML =
-            '<div class="alert alert-danger">Could not load posts. Please try again.</div>';
-    }
-}
-        async function likeAndShow(postId, btn) {
-    try {
-        // Like/unlike
-        const response = await fetch(`/forum/like/${postId}`, { method: 'POST' });
-        const data = await response.json();
-        if (data.success) {
-            btn.innerHTML = `💗 Support (${data.likes})`;
-            if (data.liked) {
-                btn.classList.add('liked');
+            if (file.type.startsWith('video')) {
+                content.innerHTML = `<video src="${url}" controls></video>`;
             } else {
-                btn.classList.remove('liked');
+                content.innerHTML = `<img src="${url}" alt="Preview">`;
+            }
+            preview.style.display = 'inline-block';
+        }
+
+        function removeMedia() {
+            document.getElementById('mediaInput').value = '';
+            document.getElementById('mediaPreview').style.display = 'none';
+            document.getElementById('mediaPreviewContent').innerHTML = '';
+        }
+
+        // Submit post with media
+        async function submitPost() {
+            const content = document.getElementById('postContent').value;
+            const isAnonymous = document.getElementById('isAnonymous').checked;
+            const mediaInput = document.getElementById('mediaInput');
+
+            if (!content.trim() && !mediaInput.files[0]) {
+                return alert('Please write something or attach a photo/video!');
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('content', content);
+                formData.append('is_anonymous', isAnonymous);
+                if (mediaInput.files[0]) {
+                    formData.append('media', mediaInput.files[0]);
+                }
+
+                const response = await fetch('/forum/post', {
+                    method: 'POST',
+                    body: formData // no Content-Type header — browser sets it with boundary
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('postContent').value = '';
+                    removeMedia();
+                    loadPosts();
+                } else {
+                    alert('Could not post. Please try again.');
+                }
+            } catch(err) {
+                alert('Something went wrong. Please try again.');
             }
         }
-    } catch(err) {
-        console.log('Like error:', err);
-    }
 
-    // Always show who supported after clicking
-    await showLikes(postId);
-}
+        // Search
+        function searchPosts() {
+            const query = document.getElementById('forumSearch').value.toLowerCase().trim();
+            const clearBtn = document.getElementById('clearSearchBtn');
+            clearBtn.style.display = query ? 'inline' : 'none';
+            if (!allPostsData) return;
+            if (!query) { displayPosts(allPostsData); return; }
+
+            const filtered = {
+                posts: (allPostsData.posts || []).filter(p =>
+                    p.content.toLowerCase().includes(query) ||
+                    (p.tags && p.tags.toLowerCase().includes(query))
+                ),
+                relatedPosts: []
+            };
+
+            const container = document.getElementById('postsContainer');
+            if (filtered.posts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-search" style="font-size:2.5rem; color:#ffccd5;"></i>
+                        <p class="mt-2">No posts found for "<strong>${query}</strong>"</p>
+                    </div>`;
+                return;
+            }
+            container.innerHTML = `
+                <div class="mb-2">
+                    <span class="section-label all">🔍 ${filtered.posts.length} result${filtered.posts.length > 1 ? 's' : ''} for "${query}"</span>
+                </div>
+                ${filtered.posts.map(p => renderPost(p, false)).join('')}
+            `;
+        }
+
+        function clearSearch() {
+            document.getElementById('forumSearch').value = '';
+            document.getElementById('clearSearchBtn').style.display = 'none';
+            if (allPostsData) displayPosts(allPostsData);
+        }
+
+        async function likeAndShow(postId, btn) {
+            try {
+                const response = await fetch(`/forum/like/${postId}`, { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    btn.innerHTML = `💗 Support (${data.likes})`;
+                    data.liked ? btn.classList.add('liked') : btn.classList.remove('liked');
+                }
+            } catch(err) { console.log('Like error:', err); }
+            await showLikes(postId);
+        }
 
         async function showLikes(postId) {
             const overlay = document.getElementById('likesModalOverlay');
             const list = document.getElementById('likesList');
             list.innerHTML = '<div style="color:#bbb; text-align:center; padding:10px;">Loading...</div>';
             overlay.classList.add('show');
-
             try {
                 const res = await fetch(`/forum/likes/${postId}`);
                 const likes = await res.json();
-
                 if (likes.length === 0) {
                     list.innerHTML = '<div style="color:#bbb; text-align:center; padding:10px;">No support yet — be the first! 💗</div>';
                     return;
                 }
-
                 list.innerHTML = likes.map(l => `
                     <div class="like-person">
                         <div class="like-avatar">${l.full_name.charAt(0).toUpperCase()}</div>
@@ -390,12 +492,8 @@ async function loadPosts() {
         async function toggleComments(postId) {
             const section = document.getElementById(`comments-${postId}`);
             const isHidden = section.style.display === 'none';
-            if (isHidden) {
-                section.style.display = 'block';
-                await loadComments(postId);
-            } else {
-                section.style.display = 'none';
-            }
+            if (isHidden) { section.style.display = 'block'; await loadComments(postId); }
+            else { section.style.display = 'none'; }
         }
 
         async function loadComments(postId) {
@@ -426,7 +524,6 @@ async function loadPosts() {
             const isAnonymous = document.getElementById(`anon-comment-${postId}`).checked;
             const content = input.value.trim();
             if (!content) return;
-
             try {
                 const res = await fetch(`/forum/comment/${postId}`, {
                     method: 'POST',
@@ -434,13 +531,8 @@ async function loadPosts() {
                     body: JSON.stringify({ content, is_anonymous: isAnonymous })
                 });
                 const data = await res.json();
-                if (data.success) {
-                    input.value = '';
-                    await loadComments(postId);
-                }
-            } catch(err) {
-                console.log('Comment error:', err);
-            }
+                if (data.success) { input.value = ''; await loadComments(postId); }
+            } catch(err) { console.log('Comment error:', err); }
         }
 
         function displayPosts(data) {
@@ -458,8 +550,7 @@ async function loadPosts() {
                         </p>
                         ${relatedPosts.map(p => renderPost(p, true)).join('')}
                         <hr style="border-color:#ffccd5; margin:20px 0;">
-                    </div>
-                `;
+                    </div>`;
             }
 
             if (posts.length === 0 && relatedPosts.length === 0) {
@@ -471,33 +562,9 @@ async function loadPosts() {
             } else if (posts.length > 0) {
                 html += `
                     <div class="mb-2"><span class="section-label all">All Posts</span></div>
-                    ${posts.map(p => renderPost(p, false)).join('')}
-                `;
+                    ${posts.map(p => renderPost(p, false)).join('')}`;
             }
             container.innerHTML = html;
-        }
-
-        async function submitPost() {
-            const content = document.getElementById('postContent').value;
-            const isAnonymous = document.getElementById('isAnonymous').checked;
-            if (!content.trim()) return alert('Please write something first!');
-
-            try {
-                const response = await fetch('/forum/post', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content, is_anonymous: isAnonymous })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    document.getElementById('postContent').value = '';
-                    loadPosts();
-                } else {
-                    alert('Could not post. Please try again.');
-                }
-            } catch(err) {
-                alert('Something went wrong. Please try again.');
-            }
         }
 
         // Notifications
@@ -510,12 +577,8 @@ async function loadPosts() {
                 const res = await fetch('/notifications/unread');
                 const data = await res.json();
                 const badge = document.getElementById('notif-badge');
-                if (data.count > 0) {
-                    badge.style.display = 'inline';
-                    badge.innerText = data.count;
-                } else {
-                    badge.style.display = 'none';
-                }
+                if (data.count > 0) { badge.style.display = 'inline'; badge.innerText = data.count; }
+                else { badge.style.display = 'none'; }
             } catch(err) {}
         }
 
@@ -574,7 +637,6 @@ async function loadPosts() {
             document.getElementById('notifDropdown').style.display = 'none';
             notifOpen = false;
         }
-
     </script>
 </body>
 </html>

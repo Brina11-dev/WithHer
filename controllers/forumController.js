@@ -44,7 +44,7 @@ const getPosts = (req, res) => {
         (err, symptomResults) => {
             // Get all posts regardless
             db.query(`
-                SELECT fp.id, fp.user_id, fp.content, fp.is_anonymous, fp.created_at, fp.likes, fp.tags, u.full_name
+                SELECT fp.id, fp.user_id, fp.content, fp.is_anonymous, fp.created_at, fp.likes, fp.tags, fp.media_url, fp.media_type, u.full_name
                 FROM forum_posts fp
                 JOIN users u ON fp.user_id = u.id
                 ORDER BY fp.created_at DESC
@@ -68,26 +68,6 @@ const getPosts = (req, res) => {
 
                 res.json({ posts, relatedPosts, userTags });
             });
-        }
-    );
-};
-
-// Create new post (auto-tag based on content)
-const createPost = (req, res) => {
-    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
-
-    const { content, is_anonymous } = req.body;
-    if (!content.trim()) return res.status(400).json({ error: 'Content is required' });
-
-    // Auto-tag the post based on its content
-    const tags = extractKeywords(content).join(',');
-
-    db.query(
-        'INSERT INTO forum_posts (user_id, content, is_anonymous, tags) VALUES (?, ?, ?, ?)',
-        [req.session.userId, content, is_anonymous, tags || null],
-        (err, result) => {
-            if (err) return res.status(500).json({ error: 'Could not create post' });
-            res.json({ success: true, id: result.insertId });
         }
     );
 };
@@ -237,5 +217,28 @@ const addComment = (req, res) => {
     );
 };
 
+const createPost = (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+
+    const { content } = req.body;
+    const is_anonymous = req.body.is_anonymous === 'true' || req.body.is_anonymous === true ? 1 : 0;
+    if (!content && !req.file) return res.status(400).json({ error: 'Post cannot be empty' });
+
+    const tags = extractKeywords(content || '').join(',');
+    const mediaUrl = req.file ? '/uploads/' + req.file.filename : null;
+    const mediaType = req.file ? (req.file.mimetype.startsWith('video') ? 'video' : 'image') : null;
+
+    db.query(
+        'INSERT INTO forum_posts (user_id, content, is_anonymous, tags, media_url, media_type) VALUES (?, ?, ?, ?, ?, ?)',
+        [req.session.userId, content || '', is_anonymous, tags || null, mediaUrl, mediaType],
+        (err, result) => {
+           if (err) {
+        console.error('DB createPost error:', err.message);
+         return res.status(500).json({ error: 'Could not create post' });
+         }
+            res.json({ success: true, id: result.insertId });
+        }
+    );
+};
 
 module.exports = { showForum, getPosts, createPost, likePost, getComments, addComment, getPostLikes };
