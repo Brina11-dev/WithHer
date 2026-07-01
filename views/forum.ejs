@@ -138,6 +138,19 @@
     </div>
 
     <div class="container mt-4 pb-5">
+        <!-- Search Box -->
+       <div style="background:white; border-radius: 15px; padding: 12px 18px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 15px;
+            display: flex; align-items: center; gap: 10px;">
+           <i class="bi bi-search" style="color:#ff6b9d; font-size:1rem;"></i>
+           <input type="text" id="forumSearch" placeholder="Search posts by topic or keyword..."
+             style="border:none; outline:none; flex:1; font-size:0.9rem; background:transparent;"
+             oninput="searchPosts()">
+          <button onclick="clearSearch()" id="clearSearchBtn"
+          style="display:none; background:none; border:none; color:#aaa; cursor:pointer; font-size:0.85rem;">
+        ✕ Clear
+         </button>
+     </div>
         <div class="new-post-box">
             <h6 class="mb-3">💭 Share something or ask a question</h6>
             <textarea class="form-control" id="postContent" rows="3"
@@ -258,7 +271,69 @@
                 </div>
             `;
         }
+     let allPostsData = null;
 
+function searchPosts() {
+    const query = document.getElementById('forumSearch').value.toLowerCase().trim();
+    const clearBtn = document.getElementById('clearSearchBtn');
+
+    clearBtn.style.display = query ? 'inline' : 'none';
+
+    if (!allPostsData) return;
+
+    if (!query) {
+        displayPosts(allPostsData);
+        return;
+    }
+
+    // Filter posts matching query in content or tags
+    const filtered = {
+        posts: (allPostsData.posts || []).filter(p =>
+            p.content.toLowerCase().includes(query) ||
+            (p.tags && p.tags.toLowerCase().includes(query))
+        ),
+        relatedPosts: []  // hide related section during search
+    };
+
+    const container = document.getElementById('postsContainer');
+
+    if (filtered.posts.length === 0) {
+        container.innerHTML = `
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-search" style="font-size:2.5rem; color:#ffccd5;"></i>
+                <p class="mt-2">No posts found for "<strong>${query}</strong>"</p>
+                <p style="font-size:0.85rem;">Try a different keyword</p>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="mb-2">
+            <span class="section-label all">
+                🔍 ${filtered.posts.length} result${filtered.posts.length > 1 ? 's' : ''} for "${query}"
+            </span>
+        </div>
+        ${filtered.posts.map(p => renderPost(p, false)).join('')}
+    `;
+}
+
+function clearSearch() {
+    document.getElementById('forumSearch').value = '';
+    document.getElementById('clearSearchBtn').style.display = 'none';
+    if (allPostsData) displayPosts(allPostsData);
+}
+
+async function loadPosts() {
+    try {
+        const response = await fetch('/forum/posts');
+        const data = await response.json();
+        allPostsData = data; // save for search
+        displayPosts(data);
+    } catch(err) {
+        document.getElementById('postsContainer').innerHTML =
+            '<div class="alert alert-danger">Could not load posts. Please try again.</div>';
+    }
+}
         async function likeAndShow(postId, btn) {
     try {
         // Like/unlike
@@ -499,6 +574,7 @@
             document.getElementById('notifDropdown').style.display = 'none';
             notifOpen = false;
         }
+
     </script>
 </body>
 </html>
