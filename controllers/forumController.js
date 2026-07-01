@@ -112,4 +112,50 @@ const likePost = (req, res) => {
     );
 };
 
-module.exports = { showForum, getPosts, createPost, likePost };
+// Get comments for a post
+const getComments = (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+
+    const { postId } = req.params;
+
+    db.query(`
+        SELECT c.id, c.content, c.is_anonymous, c.created_at, u.full_name
+        FROM comments c
+        JOIN users u ON c.user_id = u.id
+        WHERE c.post_id = ?
+        ORDER BY c.created_at ASC
+    `, [postId], (err, results) => {
+        if (err) return res.status(500).json({ error: 'Could not load comments' });
+        res.json(results);
+    });
+};
+
+// Add a comment
+const addComment = (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+
+    const { postId } = req.params;
+    const { content, is_anonymous } = req.body;
+
+    if (!content.trim()) return res.status(400).json({ error: 'Comment cannot be empty' });
+
+    db.query(
+        'INSERT INTO comments (post_id, user_id, content, is_anonymous) VALUES (?, ?, ?, ?)',
+        [postId, req.session.userId, content, is_anonymous],
+        (err, result) => {
+            if (err) return res.status(500).json({ error: 'Could not add comment' });
+
+            // Return the new comment with user info
+            db.query(`
+                SELECT c.id, c.content, c.is_anonymous, c.created_at, u.full_name
+                FROM comments c
+                JOIN users u ON c.user_id = u.id
+                WHERE c.id = ?
+            `, [result.insertId], (err, rows) => {
+                if (err) return res.status(500).json({ error: 'Error' });
+                res.json({ success: true, comment: rows[0] });
+            });
+        }
+    );
+};
+module.exports = { showForum, getPosts, createPost, likePost, getComments, addComment };

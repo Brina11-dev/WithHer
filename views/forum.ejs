@@ -12,98 +12,97 @@
         .navbar-brand, .nav-link { color: white !important; }
         .page-header {
             background: linear-gradient(135deg, #ff6b9d, #c44569);
-            color: white;
-            padding: 30px 20px;
-            border-radius: 0 0 30px 30px;
-            text-align: center;
+            color: white; padding: 30px 20px;
+            border-radius: 0 0 30px 30px; text-align: center;
         }
         .post-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
+            background: white; border-radius: 15px;
+            padding: 20px; margin-bottom: 15px;
             box-shadow: 0 3px 15px rgba(0,0,0,0.08);
             border-left: 4px solid #ff6b9d;
         }
-        .post-card.related {
-            border-left: 4px solid #c44569;
-            background: #fff8fb;
-        }
-        .post-card .author {
-            color: #ff6b9d;
-            font-weight: bold;
-            font-size: 0.85rem;
-        }
-        .post-card .time {
-            color: #aaa;
-            font-size: 0.8rem;
-        }
-        .post-card .content {
-            margin-top: 10px;
-            color: #444;
-        }
+        .post-card.related { border-left: 4px solid #c44569; background: #fff8fb; }
+        .post-card .author { color: #ff6b9d; font-weight: bold; font-size: 0.85rem; }
+        .post-card .time { color: #aaa; font-size: 0.8rem; }
+        .post-card .content { margin-top: 10px; color: #444; }
         .new-post-box {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            background: white; border-radius: 20px;
+            padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.08);
             margin-bottom: 20px;
         }
         .btn-pink {
             background: linear-gradient(135deg, #ff6b9d, #c44569);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 10px 25px;
-            margin-top: 10px;
-            width: 100%;
+            color: white; border: none; border-radius: 10px;
+            padding: 10px 25px; margin-top: 10px; width: 100%;
         }
         .btn-pink:hover { opacity: 0.9; color: white; }
         .anonymous-badge {
-            background: #f0f0f0;
-            color: #888;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            background: #f0f0f0; color: #888;
+            padding: 3px 10px; border-radius: 20px; font-size: 0.75rem;
         }
-        .like-btn {
-            background: none;
-            border: 1px solid #ffccd5;
-            color: #ff6b9d;
-            border-radius: 20px;
-            padding: 3px 12px;
-            font-size: 0.85rem;
-            cursor: pointer;
+        .action-btn {
+            background: none; border: 1px solid #ffccd5;
+            color: #ff6b9d; border-radius: 20px;
+            padding: 3px 12px; font-size: 0.85rem;
+            cursor: pointer; text-decoration: none;
+            display: inline-block;
         }
-        .like-btn:hover { background: #fff0f5; }
+        .action-btn:hover { background: #fff0f5; color: #ff6b9d; }
         .section-label {
-            font-size: 0.8rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            display: inline-block;
+            font-size: 0.8rem; font-weight: bold;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 10px; padding: 6px 14px;
+            border-radius: 20px; display: inline-block;
         }
-        .section-label.related {
-            background: #ffe0ec;
-            color: #c44569;
-        }
-        .section-label.all {
-            background: #f0f0f0;
-            color: #888;
-        }
+        .section-label.related { background: #ffe0ec; color: #c44569; }
+        .section-label.all { background: #f0f0f0; color: #888; }
         .tag-pill {
-            background: #fff0f5;
-            color: #c44569;
-            border-radius: 20px;
-            padding: 2px 10px;
-            font-size: 0.72rem;
-            margin-right: 4px;
-            display: inline-block;
-            margin-top: 6px;
+            background: #fff0f5; color: #c44569;
+            border-radius: 20px; padding: 2px 10px;
+            font-size: 0.72rem; margin-right: 4px;
+            display: inline-block; margin-top: 6px;
         }
+        /* Comments */
+        .comments-section {
+            margin-top: 14px;
+            border-top: 1px solid #fff0f5;
+            padding-top: 12px;
+        }
+        .comment-item {
+            background: #fff5f8;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        .comment-author {
+            font-weight: bold; color: #c44569;
+            font-size: 0.78rem; margin-bottom: 3px;
+        }
+        .comment-time { color: #bbb; font-size: 0.72rem; }
+        .comment-input-row {
+            display: flex; gap: 8px;
+            align-items: center; margin-top: 10px;
+        }
+        .comment-input-row input {
+            flex: 1; border: 1px solid #ffccd5;
+            border-radius: 20px; padding: 7px 14px;
+            font-size: 0.83rem; outline: none;
+        }
+        .comment-input-row input:focus { border-color: #ff6b9d; }
+        .comment-send-btn {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white; border: none; border-radius: 50%;
+            width: 34px; height: 34px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .toggle-comments-btn {
+            background: none; border: none;
+            color: #aaa; font-size: 0.8rem;
+            cursor: pointer; padding: 0;
+        }
+        .toggle-comments-btn:hover { color: #ff6b9d; }
     </style>
 </head>
 <body>
@@ -124,7 +123,6 @@
     </div>
 
     <div class="container mt-4 pb-5">
-
         <!-- New Post Box -->
         <div class="new-post-box">
             <h6 class="mb-3">💭 Share something or ask a question</h6>
@@ -148,7 +146,6 @@
                 <p class="mt-2">Loading posts...</p>
             </div>
         </div>
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -178,54 +175,136 @@
             ).join('') : '';
 
             return `
-                <div class="post-card ${isRelated ? 'related' : ''}">
+                <div class="post-card ${isRelated ? 'related' : ''}" id="post-${post.id}">
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="author">
                             ${post.is_anonymous
                                 ? '<span class="anonymous-badge">👤 Anonymous Sister</span>'
-                                : `<a href="/messages?userId=${post.user_id}&name=${encodeURIComponent(post.full_name)}" 
-                               style="color: #ff6b9d; text-decoration: none;">
-                             ${post.full_name}
-                      </a>`}
+                                : `<a href="/messages?userId=${post.user_id}&name=${encodeURIComponent(post.full_name)}"
+                                      style="color: #ff6b9d; text-decoration: none;">${post.full_name}</a>`}
                         </span>
                         <span class="time">${formatDate(post.created_at)}</span>
                     </div>
                     <div class="content">${post.content}</div>
                     ${tags ? `<div class="mt-1">${tags}</div>` : ''}
-                    <div class="mt-2">
-                        <button class="like-btn" onclick="likePost(${post.id}, this)">
+
+                    <!-- Action buttons -->
+                    <div class="mt-2 d-flex align-items-center gap-2 flex-wrap">
+                        <button class="action-btn" onclick="likePost(${post.id}, this)">
                             💗 Support (${post.likes || 0})
                         </button>
-                         ${!post.is_anonymous && post.user_id ? `
-        <a href="/messages?userId=${post.user_id}&name=${encodeURIComponent(post.full_name)}" 
-           style="background: none; border: 1px solid #ffccd5; color: #ff6b9d; 
-                  border-radius: 20px; padding: 3px 12px; font-size: 0.85rem; 
-                  text-decoration: none; cursor: pointer;">
-             Message
-        </a>
-    ` : ''}
+                        <button class="action-btn" onclick="toggleComments(${post.id})">
+                            💬 Comments
+                        </button>
+                        ${!post.is_anonymous && post.user_id ? `
+                            <a href="/messages?userId=${post.user_id}&name=${encodeURIComponent(post.full_name)}"
+                               class="action-btn">
+                                ✉️ Message
+                            </a>
+                        ` : ''}
+                    </div>
+
+                    <!-- Comments Section (hidden by default) -->
+                    <div class="comments-section" id="comments-${post.id}" style="display:none;">
+                        <div id="comments-list-${post.id}">
+                            <div class="text-muted" style="font-size:0.8rem;">Loading comments...</div>
+                        </div>
+                        <!-- Comment input -->
+                        <div class="comment-input-row">
+                            <input type="text" id="comment-input-${post.id}"
+                                placeholder="Write a comment..."
+                                onkeydown="if(event.key==='Enter') submitComment(${post.id})">
+                            <button class="comment-send-btn" onclick="submitComment(${post.id})">
+                                <i class="bi bi-send-fill" style="font-size:0.75rem;"></i>
+                            </button>
+                        </div>
+                        <div class="form-check mt-1">
+                            <input type="checkbox" class="form-check-input" id="anon-comment-${post.id}" checked>
+                            <label class="form-check-label text-muted" style="font-size:0.78rem;">
+                                Comment anonymously
+                            </label>
+                        </div>
                     </div>
                 </div>
             `;
         }
 
+        async function toggleComments(postId) {
+            const section = document.getElementById(`comments-${postId}`);
+            const isHidden = section.style.display === 'none';
+
+            if (isHidden) {
+                section.style.display = 'block';
+                await loadComments(postId);
+            } else {
+                section.style.display = 'none';
+            }
+        }
+
+        async function loadComments(postId) {
+            const listDiv = document.getElementById(`comments-list-${postId}`);
+            try {
+                const res = await fetch(`/forum/comments/${postId}`);
+                const comments = await res.json();
+
+                if (comments.length === 0) {
+                    listDiv.innerHTML = '<p style="color:#bbb; font-size:0.8rem;">No comments yet. Be the first!</p>';
+                    return;
+                }
+
+                listDiv.innerHTML = comments.map(c => `
+                    <div class="comment-item">
+                        <div class="d-flex justify-content-between">
+                            <span class="comment-author">
+                                ${c.is_anonymous
+                                    ? '👤 Anonymous'
+                                    : c.full_name}
+                            </span>
+                            <span class="comment-time">${formatDate(c.created_at)}</span>
+                        </div>
+                        <div style="color:#444; margin-top:3px;">${c.content}</div>
+                    </div>
+                `).join('');
+            } catch(err) {
+                listDiv.innerHTML = '<p class="text-danger" style="font-size:0.8rem;">Could not load comments.</p>';
+            }
+        }
+
+        async function submitComment(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            const isAnonymous = document.getElementById(`anon-comment-${postId}`).checked;
+            const content = input.value.trim();
+
+            if (!content) return;
+
+            try {
+                const res = await fetch(`/forum/comment/${postId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content, is_anonymous: isAnonymous })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    input.value = '';
+                    await loadComments(postId);
+                }
+            } catch(err) {
+                console.log('Comment error:', err);
+            }
+        }
+
         function displayPosts(data) {
             const container = document.getElementById('postsContainer');
-
-            // Handle old format (array) and new format (object with posts/relatedPosts)
             const posts = Array.isArray(data) ? data : (data.posts || []);
             const relatedPosts = Array.isArray(data) ? [] : (data.relatedPosts || []);
-            const userTags = Array.isArray(data) ? [] : (data.userTags || []);
 
             let html = '';
 
-            // Related posts section
             if (relatedPosts.length > 0) {
                 html += `
                     <div class="mb-3">
-                        <span class="section-label related">
-                            💗 Related to your symptoms
-                        </span>
+                        <span class="section-label related">💗 Related to your symptoms</span>
                         <p class="text-muted mb-2" style="font-size: 0.82rem;">
                             Based on your recent symptom check — other women sharing similar experiences
                         </p>
@@ -235,7 +314,6 @@
                 `;
             }
 
-            // All posts section
             if (posts.length === 0 && relatedPosts.length === 0) {
                 html = `
                     <div class="text-center text-muted py-4">
@@ -257,7 +335,6 @@
         async function submitPost() {
             const content = document.getElementById('postContent').value;
             const isAnonymous = document.getElementById('isAnonymous').checked;
-
             if (!content.trim()) return alert('Please write something first!');
 
             try {
@@ -266,7 +343,6 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ content, is_anonymous: isAnonymous })
                 });
-
                 const data = await response.json();
                 if (data.success) {
                     document.getElementById('postContent').value = '';
