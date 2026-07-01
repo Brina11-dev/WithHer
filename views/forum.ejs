@@ -225,13 +225,10 @@
                     ${tags ? `<div class="mt-1">${tags}</div>` : ''}
 
                     <div class="mt-2 d-flex align-items-center gap-2 flex-wrap">
-                        <button class="action-btn" id="like-btn-${post.id}" onclick="likePost(${post.id}, this)">
-                            💗 Support (${post.likes || 0})
-                        </button>
-                        <button class="action-btn" onclick="showLikes(${post.id})" 
-                            style="font-size:0.78rem; padding:3px 10px; color:#aaa; border-color:#eee;">
-                            See who supported
-                        </button>
+                       <button class="action-btn ${post.likes > 0 ? 'liked' : ''}" id="like-btn-${post.id}" onclick="likeAndShow(${post.id}, this)">
+                        💗 Support (${post.likes || 0})
+                          </button>
+                    
                         <button class="action-btn" onclick="toggleComments(${post.id})">
                             💬 Comments
                         </button>
@@ -262,22 +259,26 @@
             `;
         }
 
-        async function likePost(postId, btn) {
-            try {
-                const response = await fetch(`/forum/like/${postId}`, { method: 'POST' });
-                const data = await response.json();
-                if (data.success) {
-                    btn.innerHTML = `💗 Support (${data.likes})`;
-                    if (data.liked) {
-                        btn.classList.add('liked');
-                    } else {
-                        btn.classList.remove('liked');
-                    }
-                }
-            } catch(err) {
-                console.log('Like error:', err);
+        async function likeAndShow(postId, btn) {
+    try {
+        // Like/unlike
+        const response = await fetch(`/forum/like/${postId}`, { method: 'POST' });
+        const data = await response.json();
+        if (data.success) {
+            btn.innerHTML = `💗 Support (${data.likes})`;
+            if (data.liked) {
+                btn.classList.add('liked');
+            } else {
+                btn.classList.remove('liked');
             }
         }
+    } catch(err) {
+        console.log('Like error:', err);
+    }
+
+    // Always show who supported after clicking
+    await showLikes(postId);
+}
 
         async function showLikes(postId) {
             const overlay = document.getElementById('likesModalOverlay');
