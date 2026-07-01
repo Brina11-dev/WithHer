@@ -92,25 +92,88 @@ const createPost = (req, res) => {
     );
 };
 
-// Like a post
+// Like/unlike a post (toggle) + track who liked
 const likePost = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
     const { id } = req.params;
+    const userId = req.session.userId;
 
+    // Check if already liked
     db.query(
-        'UPDATE forum_posts SET likes = COALESCE(likes, 0) + 1 WHERE id = ?',
-        [id],
-        (err) => {
-            if (err) return res.status(500).json({ error: 'Could not like post' });
+        'SELECT id FROM post_likes WHERE post_id = ? AND user_id = ?',
+        [id, userId],
+        (err, existing) => {
+            if (err) return res.status(500).json({ error: 'Error' });
 
-            db.query('SELECT likes FROM forum_posts WHERE id = ?', [id], (err, results) => {
-                if (err) return res.status(500).json({ error: 'Error' });
-                res.json({ success: true, likes: results[0].likes });
-            });
+            if (existing.length > 0) {
+                // Already liked — unlike it
+                db.query('DELETE FROM post_likes WHERE post_id = ? AND user_id = ?', [id, userId], (err) => {
+                    if (err) return res.status(500).json({ error: 'Error' });
+
+                    db.query('UPDATE forum_posts SET likes = GREATEST(0, likes - 1) WHERE id = ?', [id], (err) => {
+                        if (err) return res.status(500).json({ error: 'Error' });
+
+                        db.query('SELECT likes FROM forum_posts WHERE id = ?', [id], (err, results) => {
+                            res.json({ success: true, likes: results[0].likes, liked: false });
+                        });
+                    });
+                });
+            } else {
+                // Not liked yet — like it
+                db.query('INSERT INTO post_likes (post_id, user_id) VALUES (?, ?)', [id, userId], (err) => {
+                    if (err) return res.status(500).json({ error: 'Error' });
+
+                    db.query('UPDATE forum_posts SET likes = COALESCE(likes, 0) + 1 WHERE id = ?', [id], (err) => {
+                        if (err) return res.status(500).json({ error: 'Error' });
+
+                        db.query('SELECT likes FROM forum_posts WHERE id = ?', [id], (err, results) => {
+                            if (err) return res.status(500).json({ error: 'Error' });
+
+                            res.json({ success: true, likes: results[0].likes, liked: true });
+
+                            // Notify post owner
+                            db.query('SELECT user_id FROM forum_posts WHERE id = ?', [id], (err, posts) => {
+                                if (!err && posts.length > 0 && posts[0].user_id !== userId) {
+                                    db.query('SELECT full_name FROM users WHERE id = ?', [userId], (err, users) => {
+                                        if (!err && users.length > 0) {
+                                            global.createNotification(
+                                                posts[0].user_id,
+                                                'support',
+                                                `${users[0].full_name} supported your post 💗`,
+                                                `/forum`
+                                            );
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    });
+                });
+            }
         }
     );
 };
+
+// Get who liked a post
+const getPostLikes = (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+
+    const { id } = req.params;
+
+    db.query(`
+        SELECT u.full_name, u.id,
+               pl.created_at
+        FROM post_likes pl
+        JOIN users u ON pl.user_id = u.id
+        WHERE pl.post_id = ?
+        ORDER BY pl.created_at DESC
+    `, [id], (err, results) => {
+        if (err) return res.status(500).json({ error: 'Error' });
+        res.json(results);
+    });
+};
+
 
 // Get comments for a post
 const getComments = (req, res) => {
@@ -175,4 +238,4 @@ const addComment = (req, res) => {
 };
 
 
-module.exports = { showForum, getPosts, createPost, likePost, getComments, addComment };
+module.exports = { showForum, getPosts, createPost, likePost, getComments, addComment, getPostLikes };

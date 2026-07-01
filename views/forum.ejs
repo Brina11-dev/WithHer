@@ -48,6 +48,10 @@
             display: inline-block;
         }
         .action-btn:hover { background: #fff0f5; color: #ff6b9d; }
+        .action-btn.liked {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white; border-color: transparent;
+        }
         .section-label {
             font-size: 0.8rem; font-weight: bold;
             text-transform: uppercase; letter-spacing: 0.5px;
@@ -62,47 +66,52 @@
             font-size: 0.72rem; margin-right: 4px;
             display: inline-block; margin-top: 6px;
         }
-        /* Comments */
         .comments-section {
-            margin-top: 14px;
-            border-top: 1px solid #fff0f5;
-            padding-top: 12px;
+            margin-top: 14px; border-top: 1px solid #fff0f5; padding-top: 12px;
         }
         .comment-item {
-            background: #fff5f8;
-            border-radius: 10px;
-            padding: 10px 14px;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
+            background: #fff5f8; border-radius: 10px;
+            padding: 10px 14px; margin-bottom: 8px; font-size: 0.85rem;
         }
-        .comment-author {
-            font-weight: bold; color: #c44569;
-            font-size: 0.78rem; margin-bottom: 3px;
-        }
+        .comment-author { font-weight: bold; color: #c44569; font-size: 0.78rem; margin-bottom: 3px; }
         .comment-time { color: #bbb; font-size: 0.72rem; }
-        .comment-input-row {
-            display: flex; gap: 8px;
-            align-items: center; margin-top: 10px;
-        }
+        .comment-input-row { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
         .comment-input-row input {
-            flex: 1; border: 1px solid #ffccd5;
-            border-radius: 20px; padding: 7px 14px;
-            font-size: 0.83rem; outline: none;
+            flex: 1; border: 1px solid #ffccd5; border-radius: 20px;
+            padding: 7px 14px; font-size: 0.83rem; outline: none;
         }
         .comment-input-row input:focus { border-color: #ff6b9d; }
         .comment-send-btn {
             background: linear-gradient(135deg, #ff6b9d, #c44569);
             color: white; border: none; border-radius: 50%;
             width: 34px; height: 34px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-        .toggle-comments-btn {
-            background: none; border: none;
-            color: #aaa; font-size: 0.8rem;
-            cursor: pointer; padding: 0;
+        /* Likes modal */
+        .likes-modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4); z-index: 9998;
+            align-items: center; justify-content: center;
         }
-        .toggle-comments-btn:hover { color: #ff6b9d; }
+        .likes-modal-overlay.show { display: flex; }
+        .likes-modal {
+            background: white; border-radius: 20px;
+            padding: 25px; width: 320px; max-height: 400px;
+            overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .likes-modal h6 { color: #c44569; font-weight: bold; margin-bottom: 15px; }
+        .like-person {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 0; border-bottom: 1px solid #fff5f8;
+            font-size: 0.88rem; color: #444;
+        }
+        .like-person:last-child { border-bottom: none; }
+        .like-avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white; display: flex; align-items: center;
+            justify-content: center; font-size: 0.85rem; font-weight: bold; flex-shrink: 0;
+        }
     </style>
 </head>
 <body>
@@ -113,11 +122,11 @@
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="bi bi-house"></i> Home</a></li>
                 <li class="nav-item">
-          <a class="nav-link position-relative" href="#" onclick="toggleNotifications(event)">
-         <i class="bi bi-bell"></i>
-         <span id="notif-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none; font-size:0.6rem;"></span>
-       </a>
-    </li>
+                    <a class="nav-link position-relative" href="#" onclick="toggleNotifications(event)">
+                        <i class="bi bi-bell"></i>
+                        <span id="notif-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none; font-size:0.6rem;"></span>
+                    </a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
             </ul>
         </div>
@@ -129,28 +138,49 @@
     </div>
 
     <div class="container mt-4 pb-5">
-        <!-- New Post Box -->
         <div class="new-post-box">
             <h6 class="mb-3">💭 Share something or ask a question</h6>
             <textarea class="form-control" id="postContent" rows="3"
                 placeholder="What's on your mind? Ask a question, share your experience, or offer support..."></textarea>
             <div class="form-check mt-2">
                 <input type="checkbox" class="form-check-input" id="isAnonymous" checked>
-                <label class="form-check-label text-muted" for="isAnonymous">
-                    Post anonymously (recommended)
-                </label>
+                <label class="form-check-label text-muted" for="isAnonymous">Post anonymously (recommended)</label>
             </div>
             <button class="btn-pink" onclick="submitPost()">
                 <i class="bi bi-send"></i> Post
             </button>
         </div>
 
-        <!-- Posts Container -->
         <div id="postsContainer">
             <div class="text-center text-muted py-4">
                 <div class="spinner-border" style="color: #ff6b9d;" role="status"></div>
                 <p class="mt-2">Loading posts...</p>
             </div>
+        </div>
+    </div>
+
+    <!-- Likes Modal -->
+    <div class="likes-modal-overlay" id="likesModalOverlay" onclick="closeLikesModal(event)">
+        <div class="likes-modal">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">💗 Supported by</h6>
+                <button onclick="document.getElementById('likesModalOverlay').classList.remove('show')"
+                    style="background:none; border:none; color:#aaa; font-size:1.2rem; cursor:pointer;">✕</button>
+            </div>
+            <div id="likesList"></div>
+        </div>
+    </div>
+
+    <!-- Notification Dropdown -->
+    <div id="notifDropdown" style="display:none; position:fixed; top:56px; right:20px; width:320px;
+        background:white; border-radius:15px; box-shadow:0 10px 40px rgba(0,0,0,0.15);
+        z-index:9999; max-height:400px; overflow-y:auto;">
+        <div style="padding:15px 20px; border-bottom:1px solid #fff0f5;">
+            <strong style="color:#c44569;">🔔 Notifications</strong>
+            <button onclick="markAllRead()" style="float:right; background:none; border:none; color:#ff6b9d; font-size:0.78rem; cursor:pointer;">Mark all read</button>
+        </div>
+        <div id="notifList" style="padding:10px 0;">
+            <div style="padding:15px 20px; color:#bbb; font-size:0.85rem;">Loading...</div>
         </div>
     </div>
 
@@ -187,35 +217,34 @@
                             ${post.is_anonymous
                                 ? '<span class="anonymous-badge">👤 Anonymous Sister</span>'
                                 : `<a href="/messages?userId=${post.user_id}&name=${encodeURIComponent(post.full_name)}"
-                                      style="color: #ff6b9d; text-decoration: none;">${post.full_name}</a>`}
+                                      style="color:#ff6b9d; text-decoration:none;">${post.full_name}</a>`}
                         </span>
                         <span class="time">${formatDate(post.created_at)}</span>
                     </div>
                     <div class="content">${post.content}</div>
                     ${tags ? `<div class="mt-1">${tags}</div>` : ''}
 
-                    <!-- Action buttons -->
                     <div class="mt-2 d-flex align-items-center gap-2 flex-wrap">
-                        <button class="action-btn" onclick="likePost(${post.id}, this)">
+                        <button class="action-btn" id="like-btn-${post.id}" onclick="likePost(${post.id}, this)">
                             💗 Support (${post.likes || 0})
+                        </button>
+                        <button class="action-btn" onclick="showLikes(${post.id})" 
+                            style="font-size:0.78rem; padding:3px 10px; color:#aaa; border-color:#eee;">
+                            See who supported
                         </button>
                         <button class="action-btn" onclick="toggleComments(${post.id})">
                             💬 Comments
                         </button>
                         ${!post.is_anonymous && post.user_id ? `
                             <a href="/messages?userId=${post.user_id}&name=${encodeURIComponent(post.full_name)}"
-                               class="action-btn">
-                                ✉️ Message
-                            </a>
+                               class="action-btn">✉️ Message</a>
                         ` : ''}
                     </div>
 
-                    <!-- Comments Section (hidden by default) -->
                     <div class="comments-section" id="comments-${post.id}" style="display:none;">
                         <div id="comments-list-${post.id}">
                             <div class="text-muted" style="font-size:0.8rem;">Loading comments...</div>
                         </div>
-                        <!-- Comment input -->
                         <div class="comment-input-row">
                             <input type="text" id="comment-input-${post.id}"
                                 placeholder="Write a comment..."
@@ -226,19 +255,65 @@
                         </div>
                         <div class="form-check mt-1">
                             <input type="checkbox" class="form-check-input" id="anon-comment-${post.id}" checked>
-                            <label class="form-check-label text-muted" style="font-size:0.78rem;">
-                                Comment anonymously
-                            </label>
+                            <label class="form-check-label text-muted" style="font-size:0.78rem;">Comment anonymously</label>
                         </div>
                     </div>
                 </div>
             `;
         }
 
+        async function likePost(postId, btn) {
+            try {
+                const response = await fetch(`/forum/like/${postId}`, { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    btn.innerHTML = `💗 Support (${data.likes})`;
+                    if (data.liked) {
+                        btn.classList.add('liked');
+                    } else {
+                        btn.classList.remove('liked');
+                    }
+                }
+            } catch(err) {
+                console.log('Like error:', err);
+            }
+        }
+
+        async function showLikes(postId) {
+            const overlay = document.getElementById('likesModalOverlay');
+            const list = document.getElementById('likesList');
+            list.innerHTML = '<div style="color:#bbb; text-align:center; padding:10px;">Loading...</div>';
+            overlay.classList.add('show');
+
+            try {
+                const res = await fetch(`/forum/likes/${postId}`);
+                const likes = await res.json();
+
+                if (likes.length === 0) {
+                    list.innerHTML = '<div style="color:#bbb; text-align:center; padding:10px;">No support yet — be the first! 💗</div>';
+                    return;
+                }
+
+                list.innerHTML = likes.map(l => `
+                    <div class="like-person">
+                        <div class="like-avatar">${l.full_name.charAt(0).toUpperCase()}</div>
+                        <span>${l.full_name}</span>
+                    </div>
+                `).join('');
+            } catch(err) {
+                list.innerHTML = '<div style="color:#bbb; text-align:center;">Could not load.</div>';
+            }
+        }
+
+        function closeLikesModal(e) {
+            if (e.target === document.getElementById('likesModalOverlay')) {
+                document.getElementById('likesModalOverlay').classList.remove('show');
+            }
+        }
+
         async function toggleComments(postId) {
             const section = document.getElementById(`comments-${postId}`);
             const isHidden = section.style.display === 'none';
-
             if (isHidden) {
                 section.style.display = 'block';
                 await loadComments(postId);
@@ -252,20 +327,14 @@
             try {
                 const res = await fetch(`/forum/comments/${postId}`);
                 const comments = await res.json();
-
                 if (comments.length === 0) {
                     listDiv.innerHTML = '<p style="color:#bbb; font-size:0.8rem;">No comments yet. Be the first!</p>';
                     return;
                 }
-
                 listDiv.innerHTML = comments.map(c => `
                     <div class="comment-item">
                         <div class="d-flex justify-content-between">
-                            <span class="comment-author">
-                                ${c.is_anonymous
-                                    ? '👤 Anonymous'
-                                    : c.full_name}
-                            </span>
+                            <span class="comment-author">${c.is_anonymous ? '👤 Anonymous' : c.full_name}</span>
                             <span class="comment-time">${formatDate(c.created_at)}</span>
                         </div>
                         <div style="color:#444; margin-top:3px;">${c.content}</div>
@@ -280,7 +349,6 @@
             const input = document.getElementById(`comment-input-${postId}`);
             const isAnonymous = document.getElementById(`anon-comment-${postId}`).checked;
             const content = input.value.trim();
-
             if (!content) return;
 
             try {
@@ -289,7 +357,6 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ content, is_anonymous: isAnonymous })
                 });
-
                 const data = await res.json();
                 if (data.success) {
                     input.value = '';
@@ -304,18 +371,17 @@
             const container = document.getElementById('postsContainer');
             const posts = Array.isArray(data) ? data : (data.posts || []);
             const relatedPosts = Array.isArray(data) ? [] : (data.relatedPosts || []);
-
             let html = '';
 
             if (relatedPosts.length > 0) {
                 html += `
                     <div class="mb-3">
                         <span class="section-label related">💗 Related to your symptoms</span>
-                        <p class="text-muted mb-2" style="font-size: 0.82rem;">
+                        <p class="text-muted mb-2" style="font-size:0.82rem;">
                             Based on your recent symptom check — other women sharing similar experiences
                         </p>
                         ${relatedPosts.map(p => renderPost(p, true)).join('')}
-                        <hr style="border-color: #ffccd5; margin: 20px 0;">
+                        <hr style="border-color:#ffccd5; margin:20px 0;">
                     </div>
                 `;
             }
@@ -323,18 +389,15 @@
             if (posts.length === 0 && relatedPosts.length === 0) {
                 html = `
                     <div class="text-center text-muted py-4">
-                        <i class="bi bi-chat-heart" style="font-size: 3rem; color: #ffccd5;"></i>
+                        <i class="bi bi-chat-heart" style="font-size:3rem; color:#ffccd5;"></i>
                         <p class="mt-2">No posts yet. Be the first to share!</p>
                     </div>`;
             } else if (posts.length > 0) {
                 html += `
-                    <div class="mb-2">
-                        <span class="section-label all">All Posts</span>
-                    </div>
+                    <div class="mb-2"><span class="section-label all">All Posts</span></div>
                     ${posts.map(p => renderPost(p, false)).join('')}
                 `;
             }
-
             container.innerHTML = html;
         }
 
@@ -361,125 +424,80 @@
             }
         }
 
-        async function likePost(postId, btn) {
+        // Notifications
+        let notifOpen = false;
+        checkUnread();
+        setInterval(checkUnread, 30000);
+
+        async function checkUnread() {
             try {
-                const response = await fetch(`/forum/like/${postId}`, { method: 'POST' });
-                const data = await response.json();
-                if (data.success) {
-                    btn.innerHTML = `💗 Support (${data.likes})`;
+                const res = await fetch('/notifications/unread');
+                const data = await res.json();
+                const badge = document.getElementById('notif-badge');
+                if (data.count > 0) {
+                    badge.style.display = 'inline';
+                    badge.innerText = data.count;
+                } else {
+                    badge.style.display = 'none';
                 }
+            } catch(err) {}
+        }
+
+        async function toggleNotifications(e) {
+            e.preventDefault();
+            const dropdown = document.getElementById('notifDropdown');
+            notifOpen = !notifOpen;
+            dropdown.style.display = notifOpen ? 'block' : 'none';
+            if (notifOpen) await loadNotifications();
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('notifDropdown');
+            if (notifOpen && !dropdown.contains(e.target) && !e.target.closest('.nav-link')) {
+                dropdown.style.display = 'none';
+                notifOpen = false;
+            }
+        });
+
+        async function loadNotifications() {
+            const list = document.getElementById('notifList');
+            try {
+                const res = await fetch('/notifications');
+                const notifications = await res.json();
+                if (notifications.length === 0) {
+                    list.innerHTML = '<div style="padding:15px 20px; color:#bbb; font-size:0.85rem;">No notifications yet 💗</div>';
+                    return;
+                }
+                list.innerHTML = notifications.map(n => `
+                    <a href="${n.link || '#'}" style="text-decoration:none;" onclick="markAllRead()">
+                        <div style="padding:12px 20px; border-bottom:1px solid #fff5f8;
+                                    background:${n.is_read ? 'white' : '#fff8fb'}; cursor:pointer;"
+                             onmouseover="this.style.background='#fff0f5'"
+                             onmouseout="this.style.background='${n.is_read ? 'white' : '#fff8fb'}'">
+                            <div style="font-size:0.85rem; color:#333;">
+                                ${n.type === 'comment' ? '💬' : n.type === 'message' ? '✉️' : '💗'}
+                                ${n.message}
+                                ${!n.is_read ? '<span style="width:7px;height:7px;background:#ff6b9d;border-radius:50%;display:inline-block;margin-left:5px;"></span>' : ''}
+                            </div>
+                            <div style="font-size:0.72rem; color:#bbb; margin-top:3px;">
+                                ${new Date(n.created_at).toLocaleDateString('en-KE', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}
+                            </div>
+                        </div>
+                    </a>
+                `).join('');
+                await fetch('/notifications/mark-read');
+                document.getElementById('notif-badge').style.display = 'none';
             } catch(err) {
-                console.log('Like error:', err);
+                list.innerHTML = '<div style="padding:15px 20px; color:#bbb; font-size:0.85rem;">Could not load notifications.</div>';
             }
         }
-    </script>
-    <!-- Notification Dropdown -->
-<div id="notifDropdown" style="
-    display: none;
-    position: fixed;
-    top: 56px;
-    right: 20px;
-    width: 320px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-    z-index: 9999;
-    max-height: 400px;
-    overflow-y: auto;">
-    <div style="padding: 15px 20px; border-bottom: 1px solid #fff0f5;">
-        <strong style="color: #c44569;">🔔 Notifications</strong>
-        <button onclick="markAllRead()" style="float:right; background:none; border:none; color:#ff6b9d; font-size:0.78rem; cursor:pointer;">
-            Mark all read
-        </button>
-    </div>
-    <div id="notifList" style="padding: 10px 0;">
-        <div style="padding: 15px 20px; color: #bbb; font-size: 0.85rem;">Loading...</div>
-    </div>
-</div>
 
-<script>
-    let notifOpen = false;
-
-    // Check unread count every 30 seconds
-    checkUnread();
-    setInterval(checkUnread, 30000);
-
-    async function checkUnread() {
-        try {
-            const res = await fetch('/notifications/unread');
-            const data = await res.json();
-            const badge = document.getElementById('notif-badge');
-            if (data.count > 0) {
-                badge.style.display = 'inline';
-                badge.innerText = data.count;
-            } else {
-                badge.style.display = 'none';
-            }
-        } catch(err) {}
-    }
-
-    async function toggleNotifications(e) {
-        e.preventDefault();
-        const dropdown = document.getElementById('notifDropdown');
-        notifOpen = !notifOpen;
-        dropdown.style.display = notifOpen ? 'block' : 'none';
-        if (notifOpen) await loadNotifications();
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        const dropdown = document.getElementById('notifDropdown');
-        if (notifOpen && !dropdown.contains(e.target) && !e.target.closest('.nav-link')) {
-            dropdown.style.display = 'none';
-            notifOpen = false;
-        }
-    });
-
-    async function loadNotifications() {
-        const list = document.getElementById('notifList');
-        try {
-            const res = await fetch('/notifications');
-            const notifications = await res.json();
-
-            if (notifications.length === 0) {
-                list.innerHTML = '<div style="padding:15px 20px; color:#bbb; font-size:0.85rem;">No notifications yet 💗</div>';
-                return;
-            }
-
-            list.innerHTML = notifications.map(n => `
-                <a href="${n.link || '#'}" style="text-decoration:none;" onclick="markAllRead()">
-                    <div style="padding: 12px 20px; border-bottom: 1px solid #fff5f8; 
-                                background: ${n.is_read ? 'white' : '#fff8fb'};
-                                cursor: pointer;"
-                         onmouseover="this.style.background='#fff0f5'"
-                         onmouseout="this.style.background='${n.is_read ? 'white' : '#fff8fb'}'">
-                        <div style="font-size:0.85rem; color:#333;">
-                            ${n.type === 'comment' ? '💬' : n.type === 'message' ? '✉️' : '💗'}
-                            ${n.message}
-                            ${!n.is_read ? '<span style="width:7px;height:7px;background:#ff6b9d;border-radius:50%;display:inline-block;margin-left:5px;"></span>' : ''}
-                        </div>
-                        <div style="font-size:0.72rem; color:#bbb; margin-top:3px;">
-                            ${new Date(n.created_at).toLocaleDateString('en-KE', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}
-                        </div>
-                    </div>
-                </a>
-            `).join('');
-
-            // Mark as read after viewing
+        async function markAllRead() {
             await fetch('/notifications/mark-read');
             document.getElementById('notif-badge').style.display = 'none';
-
-        } catch(err) {
-            list.innerHTML = '<div style="padding:15px 20px; color:#bbb; font-size:0.85rem;">Could not load notifications.</div>';
+            document.getElementById('notifDropdown').style.display = 'none';
+            notifOpen = false;
         }
-    }
-
-    async function markAllRead() {
-        await fetch('/notifications/mark-read');
-        document.getElementById('notif-badge').style.display = 'none';
-        document.getElementById('notifDropdown').style.display = 'none';
-        notifOpen = false;
-    }
-</script>
+    </script>
 </body>
 </html>
