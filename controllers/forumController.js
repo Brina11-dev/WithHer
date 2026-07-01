@@ -130,7 +130,6 @@ const getComments = (req, res) => {
     });
 };
 
-// Add a comment
 const addComment = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -145,17 +144,35 @@ const addComment = (req, res) => {
         (err, result) => {
             if (err) return res.status(500).json({ error: 'Could not add comment' });
 
-            // Return the new comment with user info
             db.query(`
-                SELECT c.id, c.content, c.is_anonymous, c.created_at, u.full_name
+                SELECT c.id, c.content, c.is_anonymous, c.created_at, u.full_name,
+                       fp.user_id as post_owner_id
                 FROM comments c
                 JOIN users u ON c.user_id = u.id
+                JOIN forum_posts fp ON fp.id = ?
                 WHERE c.id = ?
-            `, [result.insertId], (err, rows) => {
+            `, [postId, result.insertId], (err, rows) => {
                 if (err) return res.status(500).json({ error: 'Error' });
-                res.json({ success: true, comment: rows[0] });
+
+                const comment = rows[0];
+
+                // Send response FIRST
+                res.json({ success: true, comment });
+
+                // THEN handle notification (after response is sent)
+                if (comment.post_owner_id !== req.session.userId) {
+                    const commenterName = comment.is_anonymous ? 'Someone' : comment.full_name;
+                    global.createNotification(
+                        comment.post_owner_id,
+                        'comment',
+                        `${commenterName} commented on your post`,
+                        `/forum`
+                    );
+                }
             });
         }
     );
 };
+
+
 module.exports = { showForum, getPosts, createPost, likePost, getComments, addComment };

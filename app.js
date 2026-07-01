@@ -6,6 +6,17 @@ require('dotenv').config();
 
 const app = express();
 const db = require('./config/db');
+
+// Helper to create a notification
+function createNotification(userId, type, message, link) {
+    db.query(
+        'INSERT INTO notifications (user_id, type, message, link) VALUES (?, ?, ?, ?)',
+        [userId, type, message, link]
+    );
+}
+// Make it available across the app
+global.createNotification = createNotification;
+
 const fetch = require('node-fetch');
 
 // Middleware
@@ -289,35 +300,46 @@ io.on('connection', (socket) => {
     });
 
     // Send a DM
-    socket.on('send_message', async (data) => {
-        const { senderId, receiverId, content } = data;
+socket.on('send_message', async (data) => {
+    const { senderId, receiverId, content } = data;
 
-        // Save to DB
-        db.query(
-            'INSERT INTO messages (sender_id, receiver_id, content) VALUES (?, ?, ?)',
-            [senderId, receiverId, content],
-            (err, result) => {
-                if (err) return;
+    // Save to DB
+    db.query(
+        'INSERT INTO messages (sender_id, receiver_id, content) VALUES (?, ?, ?)',
+        [senderId, receiverId, content],
+        (err, result) => {
+            if (err) return;
 
-                const message = {
-                    id: result.insertId,
-                    sender_id: senderId,
-                    receiver_id: receiverId,
-                    content,
-                    created_at: new Date(),
-                    is_read: 0
-                };
+            const message = {
+                id: result.insertId,
+                sender_id: senderId,
+                receiver_id: receiverId,
+                content,
+                created_at: new Date(),
+                is_read: 0
+            };
 
-                // If receiver is online, deliver instantly
-                if (onlineUsers[receiverId]) {
-                    io.to(onlineUsers[receiverId]).emit('receive_message', message);
-                }
-
-                // Always confirm back to sender
-                socket.emit('message_sent', message);
+            // If receiver is online, deliver instantly
+            if (onlineUsers[receiverId]) {
+                io.to(onlineUsers[receiverId]).emit('receive_message', message);
             }
-        );
-    });
+
+            // Always confirm back to sender
+            socket.emit('message_sent', message);
+
+            // Notify receiver
+            db.query('SELECT full_name FROM users WHERE id = ?', [senderId], (err, users) => {
+                const senderName = users && users[0] ? users[0].full_name : 'Someone';
+                global.createNotification(
+                    receiverId,
+                    'message',
+                    `${senderName} sent you a message`,
+                    `/messages?userId=${senderId}&name=${encodeURIComponent(senderName)}`
+                );
+            });
+        }
+    );
+});
 
     // Mark messages as read
     socket.on('mark_read', (data) => {
@@ -409,6 +431,47 @@ app.get('/messages/conversations', (req, res) => {
     });
 });
 
+// Get all notifications for logged in user
+app.get('/notifications', (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+
+    db.query(
+        'SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 20',
+        [req.session.userId],
+        (err, results) => {
+            if (err) return res.status(500).json({ error: 'Error' });
+            res.json(results);
+        }
+    );
+});
+
+// Get unread notification count
+app.get('/notifications/unread', (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+
+    db.query(
+        'SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0',
+        [req.session.userId],
+        (err, results) => {
+            if (err) return res.status(500).json({ error: 'Error' });
+            res.json({ count: results[0].count });
+        }
+    );
+});
+
+// Mark all notifications as read
+app.get('/notifications/mark-read', (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+
+    db.query(
+        'UPDATE notifications SET is_read = 1 WHERE user_id = ?',
+        [req.session.userId],
+        (err) => {
+            if (err) return res.status(500).json({ error: 'Error' });
+            res.json({ success: true });
+        }
+    );
+});
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`✅ WithHer running on http://localhost:${PORT}`);

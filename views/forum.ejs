@@ -112,6 +112,12 @@
             <a class="navbar-brand" href="/dashboard">WithHer 💗</a>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="bi bi-house"></i> Home</a></li>
+                <li class="nav-item">
+          <a class="nav-link position-relative" href="#" onclick="toggleNotifications(event)">
+         <i class="bi bi-bell"></i>
+         <span id="notif-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none; font-size:0.6rem;"></span>
+       </a>
+    </li>
                 <li class="nav-item"><a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
             </ul>
         </div>
@@ -367,5 +373,113 @@
             }
         }
     </script>
+    <!-- Notification Dropdown -->
+<div id="notifDropdown" style="
+    display: none;
+    position: fixed;
+    top: 56px;
+    right: 20px;
+    width: 320px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    z-index: 9999;
+    max-height: 400px;
+    overflow-y: auto;">
+    <div style="padding: 15px 20px; border-bottom: 1px solid #fff0f5;">
+        <strong style="color: #c44569;">🔔 Notifications</strong>
+        <button onclick="markAllRead()" style="float:right; background:none; border:none; color:#ff6b9d; font-size:0.78rem; cursor:pointer;">
+            Mark all read
+        </button>
+    </div>
+    <div id="notifList" style="padding: 10px 0;">
+        <div style="padding: 15px 20px; color: #bbb; font-size: 0.85rem;">Loading...</div>
+    </div>
+</div>
+
+<script>
+    let notifOpen = false;
+
+    // Check unread count every 30 seconds
+    checkUnread();
+    setInterval(checkUnread, 30000);
+
+    async function checkUnread() {
+        try {
+            const res = await fetch('/notifications/unread');
+            const data = await res.json();
+            const badge = document.getElementById('notif-badge');
+            if (data.count > 0) {
+                badge.style.display = 'inline';
+                badge.innerText = data.count;
+            } else {
+                badge.style.display = 'none';
+            }
+        } catch(err) {}
+    }
+
+    async function toggleNotifications(e) {
+        e.preventDefault();
+        const dropdown = document.getElementById('notifDropdown');
+        notifOpen = !notifOpen;
+        dropdown.style.display = notifOpen ? 'block' : 'none';
+        if (notifOpen) await loadNotifications();
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        const dropdown = document.getElementById('notifDropdown');
+        if (notifOpen && !dropdown.contains(e.target) && !e.target.closest('.nav-link')) {
+            dropdown.style.display = 'none';
+            notifOpen = false;
+        }
+    });
+
+    async function loadNotifications() {
+        const list = document.getElementById('notifList');
+        try {
+            const res = await fetch('/notifications');
+            const notifications = await res.json();
+
+            if (notifications.length === 0) {
+                list.innerHTML = '<div style="padding:15px 20px; color:#bbb; font-size:0.85rem;">No notifications yet 💗</div>';
+                return;
+            }
+
+            list.innerHTML = notifications.map(n => `
+                <a href="${n.link || '#'}" style="text-decoration:none;" onclick="markAllRead()">
+                    <div style="padding: 12px 20px; border-bottom: 1px solid #fff5f8; 
+                                background: ${n.is_read ? 'white' : '#fff8fb'};
+                                cursor: pointer;"
+                         onmouseover="this.style.background='#fff0f5'"
+                         onmouseout="this.style.background='${n.is_read ? 'white' : '#fff8fb'}'">
+                        <div style="font-size:0.85rem; color:#333;">
+                            ${n.type === 'comment' ? '💬' : n.type === 'message' ? '✉️' : '💗'}
+                            ${n.message}
+                            ${!n.is_read ? '<span style="width:7px;height:7px;background:#ff6b9d;border-radius:50%;display:inline-block;margin-left:5px;"></span>' : ''}
+                        </div>
+                        <div style="font-size:0.72rem; color:#bbb; margin-top:3px;">
+                            ${new Date(n.created_at).toLocaleDateString('en-KE', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+
+            // Mark as read after viewing
+            await fetch('/notifications/mark-read');
+            document.getElementById('notif-badge').style.display = 'none';
+
+        } catch(err) {
+            list.innerHTML = '<div style="padding:15px 20px; color:#bbb; font-size:0.85rem;">Could not load notifications.</div>';
+        }
+    }
+
+    async function markAllRead() {
+        await fetch('/notifications/mark-read');
+        document.getElementById('notif-badge').style.display = 'none';
+        document.getElementById('notifDropdown').style.display = 'none';
+        notifOpen = false;
+    }
+</script>
 </body>
 </html>
