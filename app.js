@@ -10,7 +10,7 @@ const db = require('./config/db');
 // Helper to create a notification
 function createNotification(userId, type, message, link) {
     db.query(
-        'INSERT INTO notifications (user_id, type, message, link) VALUES (?, ?, ?, ?)',
+        'INSERT INTO notifications (user_id, type, message, link)  VALUES (?, ?, ?, ?)',
         [userId, type, message, link]
     );
 }
