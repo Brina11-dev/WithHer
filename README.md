@@ -16,10 +16,10 @@ In Kenya, women are dying from reproductive health conditions that could have be
 
 WithHer is a web platform (with a mobile app planned as the next phase) that gives Kenyan women a private, judgment-free space to understand their reproductive health and take action early.
 
- **AI Symptom Assessment** Powered by Groq's Llama 3.3 (70B) model. A user describes what she's feeling in her own words, and the AI helps identify potential reproductive health risks and recommends whether she needs urgent care, a routine clinic visit, or home monitoring.
- **Education Hub** Stigma-free, searchable information on ectopic pregnancy, abnormal bleeding, PID, STIs, and more, in **English and Swahili**, enriched with live Wikipedia API search integration.
- **Community Forum** An anonymous space for peer support, built with **Socket.io** for real-time messaging, notifications, comments, and media sharing.
- **Privacy-first design** Built so women can ask questions and seek information without fear of exposure or judgment.
+- **AI Symptom Assessment** Powered by Groq's Llama 3.3 (70B) model. A user describes what she's feeling in her own words, and the AI helps identify potential reproductive health risks and recommends whether she needs urgent care, a routine clinic visit, or home monitoring.
+- **Education Hub** Stigma-free, searchable information on ectopic pregnancy, abnormal bleeding, PID, STIs, and more, in     **English and Swahili**, enriched with live Wikipedia API search integration.
+- **Community Forum** An anonymous space for peer support, built with **Socket.io** for real-time messaging, notifications, comments, and media sharing.
+- **Privacy-first design** Built so women can ask questions and seek information without fear of exposure or judgment.
 
 **Planned next:** finishing the SOS receiver-side flow, and a native mobile app for Android/iOS.
 
@@ -41,7 +41,7 @@ I've watched two friends face reproductive health crises in silence one rushed i
 ## Project Status
 
 **Active development not yet publicly deployed.**
-Core MVP features (Education Hub, Community Forum, AI symptom checker) are built and functional in local development. Public deployment and pilot testing with women at MMUST and in Nairobi are the next milestones.
+Core MVP features (Education Hub, Community Forum, AI symptom checker, GPS Clinic Locator) are built and functional in local development. Public deployment and pilot testing with women at MMUST and in Nairobi are the next milestones.
 
 ## Project Structure
 
