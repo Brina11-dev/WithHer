@@ -253,6 +253,9 @@
         </div>
     </div>
 
+<script>
+ const currentUserId = <%- userId %>;
+ </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let allPostsData = null;
@@ -327,6 +330,11 @@
                             <a href="/messages?userId=${post.user_id}&name=${encodeURIComponent(post.full_name)}"
                                class="action-btn">✉️ Message</a>
                         ` : ''}
+                         ${post.user_id === currentUserId ? `
+                     <button class="action-btn" onclick="deletePost(${post.id})" style="border-color:#ff8787; color:#e03131;">
+                      🗑️ Delete
+                      </button>
+                     ` : ''}
                     </div>
 
                     <div class="comments-section" id="comments-${post.id}" style="display:none;">
@@ -483,6 +491,20 @@
             }
         }
 
+        async function deletePost(postId) {
+    if (!confirm('Delete this post? This cannot be undone.')) return;
+    try {
+        const res = await fetch(`/forum/delete/${postId}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById(`post-${postId}`).remove();
+        } else {
+            alert(data.error || 'Could not delete post.');
+        }
+    } catch(err) {
+        alert('Something went wrong.');
+    }
+}
         function closeLikesModal(e) {
             if (e.target === document.getElementById('likesModalOverlay')) {
                 document.getElementById('likesModalOverlay').classList.remove('show');

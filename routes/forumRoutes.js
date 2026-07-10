@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { showForum, getPosts, createPost, likePost, getComments, addComment, getPostLikes } = require('../controllers/forumController');
+const { showForum, getPosts, createPost, likePost, getComments, addComment, getPostLikes, deletePost } = require('../controllers/forumController');
 
 router.get('/forum', showForum);
 router.get('/forum/posts', getPosts);
+router.post('/forum/delete/:id', deletePost);
 const multer = require('multer');
 const path = require('path');
 const storage = multer.diskStorage({

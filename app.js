@@ -499,5 +499,5 @@ app.get('/notifications/mark-read', (req, res) => {
 });
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`✅ WithHer running on http://localhost:${PORT}`);
+    console.log(` WithHer running on http://localhost:${PORT}`);
 });

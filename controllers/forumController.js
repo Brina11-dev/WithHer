@@ -1,4 +1,7 @@
 const db = require('../config/db');
+const fs = require('fs');
+const path = require('path');
+
 
 // Helper: extract health keywords from symptom text
 function extractKeywords(text) {
@@ -30,7 +33,7 @@ function extractKeywords(text) {
 // Show forum page
 const showForum = (req, res) => {
     if (!req.session.userId) return res.redirect('/login');
-    res.render('forum');
+    res.render('forum' ,{ userId: req.session.userId });
 };
 
 // Get all posts + symptom-matched posts at top
@@ -70,6 +73,51 @@ const getPosts = (req, res) => {
             });
         }
     );
+};
+
+const deletePost = (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
+
+    const { id } = req.params;
+    const userId = req.session.userId;
+
+    // Step 1: fetch the post first — need media_url AND user_id
+    db.query('SELECT user_id, media_url FROM forum_posts WHERE id = ?', [id], (err, results) => {
+        if (err) return res.status(500).json({ error: 'Error' });
+        if (results.length === 0) return res.status(404).json({ error: 'Post not found' });
+
+        const post = results[0];
+
+        // Step 2: ownership check
+        if (post.user_id !== userId) {
+            return res.status(403).json({ error: 'Not your post' });
+        }
+
+        // Step 3: delete child rows first — comments, then likes
+        db.query('DELETE FROM comments WHERE post_id = ?', [id], (err) => {
+            if (err) return res.status(500).json({ error: 'Error' });
+
+            db.query('DELETE FROM post_likes WHERE post_id = ?', [id], (err) => {
+                if (err) return res.status(500).json({ error: 'Error' });
+
+                // Step 4: delete the post itself
+                db.query('DELETE FROM forum_posts WHERE id = ?', [id], (err) => {
+                    if (err) return res.status(500).json({ error: 'Error' });
+
+                    // Step 5: if there was media, delete the file from disk
+                    if (post.media_url) {
+                        const filePath = path.join(__dirname, '..', 'public', post.media_url);
+                        fs.unlink(filePath, (err) => {
+                            if (err) console.error('Could not delete media file:', err.message);
+                            // don't fail the request over this — post is already deleted from DB
+                        });
+                    }
+
+                    res.json({ success: true });
+                });
+            });
+        });
+    });
 };
 
 // Like/unlike a post (toggle) + track who liked
@@ -241,4 +289,4 @@ const createPost = (req, res) => {
     );
 };
 
-module.exports = { showForum, getPosts, createPost, likePost, getComments, addComment, getPostLikes };
+module.exports = { showForum, getPosts, createPost, likePost, getComments, addComment, getPostLikes, deletePost };
