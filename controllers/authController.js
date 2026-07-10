@@ -82,7 +82,6 @@ const login = (req, res) => {
     // Save session
     req.session.userId = user.id;
     req.session.userName = user.full_name;
-    console.log('is_admin value:', user.is_admin, typeof user.is_admin);
     req.session.isAdmin = user.is_admin === 1;
 
 
