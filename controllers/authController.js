@@ -40,7 +40,7 @@ const register = (req, res) => {
 
         req.session.userId = result.insertId;
         req.session.userName = full_name;
-
+        
         if (remember_me) {
           res.cookie('remember_me', result.insertId, { 
             maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -82,6 +82,9 @@ const login = (req, res) => {
     // Save session
     req.session.userId = user.id;
     req.session.userName = user.full_name;
+    console.log('is_admin value:', user.is_admin, typeof user.is_admin);
+    req.session.isAdmin = user.is_admin === 1;
+
 
     // Remember me cookie
     if (remember_me) {

@@ -33,7 +33,7 @@ function extractKeywords(text) {
 // Show forum page
 const showForum = (req, res) => {
     if (!req.session.userId) return res.redirect('/login');
-    res.render('forum' ,{ userId: req.session.userId });
+   res.render('forum', { userId: req.session.userId, isAdmin: req.session.isAdmin || false });
 };
 
 // Get all posts + symptom-matched posts at top
@@ -89,7 +89,7 @@ const deletePost = (req, res) => {
         const post = results[0];
 
         // Step 2: ownership check
-        if (post.user_id !== userId) {
+        if (post.user_id !== userId && !req.session.isAdmin) {
             return res.status(403).json({ error: 'Not your post' });
         }
 
