@@ -87,16 +87,16 @@
         <!-- Search -->
         <div class="search-box">
             <input type="text" class="form-control" id="searchInput"
-                placeholder="🔍 Search articles..." oninput="filterArticles()">
+                placeholder=" Search articles..." oninput="filterArticles()">
         </div>
 
         <!-- Filter buttons -->
         <div class="mb-3">
             <button class="filter-btn active" onclick="filterByCategory('all', this)">All</button>
-            <button class="filter-btn" onclick="filterByCategory('urgent', this)">🚨 Urgent</button>
-            <button class="filter-btn" onclick="filterByCategory('common', this)">⚠️ Common</button>
-            <button class="filter-btn" onclick="filterByCategory('general', this)">💡 General</button>
-            <button class="filter-btn" onclick="filterByCategory('prevention', this)">🛡️ Prevention</button>
+            <button class="filter-btn" onclick="filterByCategory('urgent', this)"> Urgent</button>
+            <button class="filter-btn" onclick="filterByCategory('common', this)"> Common</button>
+            <button class="filter-btn" onclick="filterByCategory('general', this)"> General</button>
+            <button class="filter-btn" onclick="filterByCategory('prevention', this)"> Prevention</button>
         </div>
 
         <!-- Articles -->
@@ -117,7 +117,7 @@
                     <div id="webSearchResults" class="mb-2" style="display:none;">
                  <p style="color: #c44569; font-weight: bold;">🌐 Web Results</p>
                  <div class="alert alert-warning py-2 px-3 mb-2" style="font-size: 0.8rem; border-radius: 10px;">
-                   ⚠️ <strong>Disclaimer:</strong> Results are from external sources (WHO, NHS, Mayo Clinic, Wikipedia). 
+                    <strong>Disclaimer:</strong> Results are from external sources (WHO, NHS, Mayo Clinic, Wikipedia). 
                      Always consult a qualified doctor for medical advice. WithHer is not responsible for third-party content.
               </div>
             <div id="searchResultsList"></div>
@@ -126,7 +126,7 @@
                         <button class="btn btn-outline-danger rounded-pill" onclick="searchWeb()" id="searchWebBtn">
                             🌐 Search Web
                         </button>
-                        <a href="/symptoms" class="btn btn-danger rounded-pill">🤖 Check My Symptoms</a>
+                        <a href="/symptoms" class="btn btn-danger rounded-pill"> Check My Symptoms</a>
                         <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -142,7 +142,7 @@
                 title: "Ectopic Pregnancy — What Every Woman Must Know",
                 category: "urgent",
                 badge: "badge-urgent",
-                label: "🚨 Urgent",
+                label: " Urgent",
                 summary: "An ectopic pregnancy is a life-threatening emergency. Learn the warning signs before it's too late.",
                 content: `
                     <h6>What is an Ectopic Pregnancy?</h6>
@@ -174,12 +174,12 @@
                 title: "Abnormal Bleeding — When Should You Worry?",
                 category: "urgent",
                 badge: "badge-urgent",
-                label: "🚨 Urgent",
+                label: " Urgent",
                 summary: "Bleeding for weeks or months is not normal. Learn what your body is trying to tell you.",
                 content: `
                     <h6>What is Abnormal Uterine Bleeding?</h6>
                     <p>Abnormal uterine bleeding includes any bleeding that is heavier than usual, lasts longer than 7 days, happens between periods, or occurs after menopause.</p>
-                    <h6>⚠️ Warning Signs</h6>
+                    <h6> Warning Signs</h6>
                     <ul>
                         <li>Bleeding that lasts more than 7 days</li>
                         <li>Soaking more than one pad per hour for several hours</li>
@@ -196,7 +196,7 @@
                         <li>Thyroid problems</li>
                         <li>In rare cases — cancer</li>
                     </ul>
-                    <h6>💡 What To Do</h6>
+                    <h6> What To Do</h6>
                     <p>Do not ignore prolonged bleeding. Visit a clinic for an examination. Many causes are treatable when caught early.</p>
                 `
             },
@@ -205,12 +205,12 @@
                 title: "Pelvic Inflammatory Disease (PID)",
                 category: "common",
                 badge: "badge-common",
-                label: "⚠️ Common",
+                label: " Common",
                 summary: "PID is a common infection that can cause serious long-term damage if left untreated.",
                 content: `
                     <h6>What is PID?</h6>
                     <p>Pelvic Inflammatory Disease (PID) is an infection of the female reproductive organs — including the uterus, fallopian tubes, and ovaries. It is usually caused by bacteria spreading from the vagina.</p>
-                    <h6>⚠️ Symptoms</h6>
+                    <h6> Symptoms</h6>
                     <ul>
                         <li>Lower abdominal or pelvic pain</li>
                         <li>Unusual vaginal discharge</li>
@@ -221,7 +221,7 @@
                     </ul>
                     <h6>Why It Matters</h6>
                     <p>Untreated PID can lead to ectopic pregnancy, infertility, and chronic pelvic pain.</p>
-                    <h6>💊 Treatment</h6>
+                    <h6> Treatment</h6>
                     <p>PID is treated with antibiotics. The sooner treatment begins, the better the outcome.</p>
                 `
             },
@@ -230,7 +230,7 @@
                 title: "STIs — What You Need to Know",
                 category: "common",
                 badge: "badge-common",
-                label: "⚠️ Common",
+                label: " Common",
                 summary: "Sexually transmitted infections are common, treatable, and nothing to be ashamed of.",
                 content: `
                     <h6>Common STIs in Kenya</h6>
@@ -241,7 +241,7 @@
                         <li><strong>HIV</strong> — weakens the immune system; manageable with ARVs</li>
                         <li><strong>HPV</strong> — can cause cervical cancer; vaccine available</li>
                     </ul>
-                    <h6>⚠️ Signs to Watch For</h6>
+                    <h6> Signs to Watch For</h6>
                     <ul>
                         <li>Unusual discharge (color, smell, amount)</li>
                         <li>Sores, bumps or rashes in the genital area</li>
@@ -249,7 +249,7 @@
                         <li>Pelvic pain</li>
                         <li>Many STIs have NO symptoms — regular testing is important</li>
                     </ul>
-                    <h6>💡 Remember</h6>
+                    <h6> Remember</h6>
                     <p>Getting an STI does not make you a bad person. Many are easily treated. What matters is getting tested and treated early.</p>
                 `
             },
@@ -258,7 +258,7 @@
                 title: "Understanding Your Menstrual Cycle",
                 category: "general",
                 badge: "badge-general",
-                label: "💡 General",
+                label: " General",
                 summary: "Know what is normal and what is not when it comes to your period.",
                 content: `
                     <h6>What is a Normal Period?</h6>
@@ -269,7 +269,7 @@
                         <li>Color: ranges from bright red to dark brown</li>
                         <li>Mild cramping is normal</li>
                     </ul>
-                    <h6>⚠️ Signs Something May Be Wrong</h6>
+                    <h6> Signs Something May Be Wrong</h6>
                     <ul>
                         <li>Period lasting more than 7 days</li>
                         <li>Soaking a pad every hour for several hours</li>
@@ -278,7 +278,7 @@
                         <li>No period for 3+ months (when not pregnant)</li>
                         <li>Very irregular cycles</li>
                     </ul>
-                    <h6>💡 Tracking Your Cycle</h6>
+                    <h6> Tracking Your Cycle</h6>
                     <p>Track your period on a calendar or app. This helps you notice changes early.</p>
                 `
             },
@@ -287,12 +287,12 @@
                 title: "How to Protect Your Reproductive Health",
                 category: "prevention",
                 badge: "badge-prevention",
-                label: "🛡️ Prevention",
+                label: " Prevention",
                 summary: "Simple steps every woman can take to protect her reproductive health.",
                 content: `
                     <h6>Regular Check-ups</h6>
                     <p>Visit a clinic at least once a year for a reproductive health check-up, even if you feel fine.</p>
-                    <h6>🛡️ Prevention Tips</h6>
+                    <h6> Prevention Tips</h6>
                     <ul>
                         <li>Get tested for STIs regularly if sexually active</li>
                         <li>Use protection (condoms) consistently</li>
@@ -302,7 +302,7 @@
                         <li>Eat a balanced diet and stay hydrated</li>
                         <li>Manage stress — it affects your hormones and cycle</li>
                     </ul>
-                    <h6>💊 Cervical Cancer Screening</h6>
+                    <h6> Cervical Cancer Screening</h6>
                     <p>Women aged 25 and above should get a Pap smear every 3-5 years. Most public hospitals in Kenya offer this service at low cost.</p>
                 `
             },
@@ -311,12 +311,12 @@
                 title: "Endometriosis — The Silent Condition",
                 category: "common",
                 badge: "badge-common",
-                label: "⚠️ Common",
+                label: " Common",
                 summary: "Millions of women suffer from endometriosis without knowing it. Learn the signs.",
                 content: `
                     <h6>What is Endometriosis?</h6>
                     <p>Endometriosis is a condition where tissue similar to the lining of the uterus grows outside it. It affects 1 in 10 women of reproductive age.</p>
-                    <h6>⚠️ Symptoms</h6>
+                    <h6> Symptoms</h6>
                     <ul>
                         <li>Very painful periods — pain that stops your daily activities</li>
                         <li>Pain during or after sex</li>
@@ -325,7 +325,7 @@
                         <li>Difficulty getting pregnant</li>
                         <li>Fatigue, bloating, nausea during periods</li>
                     </ul>
-                    <h6>💡 Important</h6>
+                    <h6> Important</h6>
                     <p>Painful periods are NOT normal. If your period pain is severe — seek medical attention. Endometriosis is manageable when diagnosed early.</p>
                 `
             },
@@ -334,12 +334,12 @@
                 title: "PCOS — Polycystic Ovary Syndrome",
                 category: "common",
                 badge: "badge-common",
-                label: "⚠️ Common",
+                label: " Common",
                 summary: "PCOS affects 1 in 5 women. Many don't know they have it.",
                 content: `
                     <h6>What is PCOS?</h6>
                     <p>PCOS is a hormonal condition where the ovaries produce excess male hormones. It affects periods, fertility, weight, and skin.</p>
-                    <h6>⚠️ Symptoms</h6>
+                    <h6> Symptoms</h6>
                     <ul>
                         <li>Irregular or missed periods</li>
                         <li>Excess hair on face, chest or back</li>
@@ -349,7 +349,7 @@
                         <li>Difficulty getting pregnant</li>
                         <li>Dark patches on skin (neck, armpits, groin)</li>
                     </ul>
-                    <h6>💊 Treatment</h6>
+                    <h6> Treatment</h6>
                     <p>PCOS has no cure but is very manageable. Lifestyle changes, medication, and regular monitoring can greatly improve quality of life.</p>
                 `
             },
@@ -358,12 +358,12 @@
                 title: "Maternal Health During Pregnancy",
                 category: "general",
                 badge: "badge-general",
-                label: "💡 General",
+                label: " General",
                 summary: "What every pregnant woman in Kenya needs to know to stay safe.",
                 content: `
                     <h6>Antenatal Care (ANC)</h6>
                     <p>Every pregnant woman should attend at least 8 antenatal visits. These visits monitor the health of both mother and baby and catch complications early.</p>
-                    <h6>⚠️ Danger Signs During Pregnancy</h6>
+                    <h6> Danger Signs During Pregnancy</h6>
                     <ul>
                         <li>Heavy vaginal bleeding</li>
                         <li>Severe headache or blurred vision</li>
@@ -373,7 +373,7 @@
                         <li>Severe abdominal pain</li>
                         <li>Difficulty breathing</li>
                     </ul>
-                    <h6>💡 In Kenya</h6>
+                    <h6> In Kenya</h6>
                     <p>Antenatal care is free at all public health facilities in Kenya. Do not miss your visits.</p>
                 `
             },
@@ -382,7 +382,7 @@
                 title: "Family Planning Options",
                 category: "general",
                 badge: "badge-general",
-                label: "💡 General",
+                label: " General",
                 summary: "Know your options. Family planning is your right.",
                 content: `
                     <h6>Common Family Planning Methods in Kenya</h6>
@@ -394,7 +394,7 @@
                         <li><strong>Condoms</strong> — also protect against STIs</li>
                         <li><strong>Emergency contraception</strong> — within 72 hours of unprotected sex</li>
                     </ul>
-                    <h6>💡 Important</h6>
+                    <h6> Important</h6>
                     <p>Family planning services are available at all public health facilities in Kenya — many are free or subsidized.</p>
                 `
             },
@@ -403,7 +403,7 @@
                 title: "Mental Health and Reproductive Health",
                 category: "general",
                 badge: "badge-general",
-                label: "💡 General",
+                label: " General",
                 summary: "Your mental health and reproductive health are deeply connected.",
                 content: `
                     <h6>The Connection</h6>
@@ -415,7 +415,7 @@
                         <li><strong>Anxiety from reproductive health concerns</strong></li>
                         <li><strong>Trauma</strong> — from pregnancy loss, difficult births, or assault</li>
                     </ul>
-                    <h6>💡 You Are Not Alone</h6>
+                    <h6> You Are Not Alone</h6>
                     <p>Seek support from a trusted person, counselor, or doctor. Kenya has mental health services available at many hospitals.</p>
                 `
             },
@@ -424,7 +424,7 @@
                 title: "Nutrition and Reproductive Health",
                 category: "prevention",
                 badge: "badge-prevention",
-                label: "🛡️ Prevention",
+                label: " Prevention",
                 summary: "What you eat directly affects your reproductive health.",
                 content: `
                     <h6>Key Nutrients for Reproductive Health</h6>
@@ -435,7 +435,7 @@
                         <li><strong>Zinc</strong> — supports fertility and immune health. Found in meat, nuts, seeds</li>
                         <li><strong>Vitamin D</strong> — affects hormone production. Get sunlight daily</li>
                     </ul>
-                    <h6>💡 Simple Tips</h6>
+                    <h6> Simple Tips</h6>
                     <ul>
                         <li>Eat a variety of vegetables daily — sukuma wiki, spinach, managu</li>
                         <li>Reduce sugar and processed foods</li>
@@ -449,7 +449,7 @@
                 title: "Afya ya Uzazi — Kwa Kiswahili",
                 category: "general",
                 badge: "badge-general",
-                label: "💡 Kiswahili",
+                label: " Kiswahili",
                 summary: "Habari muhimu kuhusu afya yako ya uzazi kwa lugha ya Kiswahili.",
                 content: `
                     <h6>Mimba ya Nje ya Mji wa Uzazi (Ectopic Pregnancy)</h6>
@@ -522,7 +522,7 @@
 
         async function searchWeb() {
             const btn = document.getElementById('searchWebBtn');
-            btn.innerHTML = '🔄 Searching...';
+            btn.innerHTML = ' Searching...';
             btn.disabled = true;
             
 

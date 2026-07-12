@@ -170,7 +170,7 @@
     </nav>
 
     <div class="page-header">
-        <h3>💬 Community Forum</h3>
+        <h3> Community Forum</h3>
         <p>You are not alone. Share, ask, support.</p>
     </div>
 
@@ -192,7 +192,7 @@
 
         <!-- New Post Box -->
         <div class="new-post-box">
-            <h6 class="mb-3">💭 Share something or ask a question</h6>
+            <h6 class="mb-3"> Share something or ask a question</h6>
             <textarea class="form-control" id="postContent" rows="3"
                 placeholder="What's on your mind? Ask a question, share your experience, or offer support..."></textarea>
 
@@ -310,7 +310,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="author">
                             ${post.is_anonymous
-                                ? '<span class="anonymous-badge">👤 Anonymous Sister</span>'
+                                ? '<span class="anonymous-badge"> Anonymous Sister</span>'
                                 : `<a href="/messages?userId=${post.user_id}&name=${encodeURIComponent(post.full_name)}"
                                       style="color:#ff6b9d; text-decoration:none;">${post.full_name}</a>`}
                         </span>
@@ -325,15 +325,15 @@
                             💗 Support (${post.likes || 0})
                         </button>
                         <button class="action-btn" onclick="toggleComments(${post.id})">
-                            💬 Comments
+                             Comments
                         </button>
                         ${!post.is_anonymous && post.user_id ? `
                             <a href="/messages?userId=${post.user_id}&name=${encodeURIComponent(post.full_name)}"
-                               class="action-btn">✉️ Message</a>
+                               class="action-btn"> Message</a>
                         ` : ''}
                          ${post.user_id === currentUserId || isAdmin ? `
                      <button class="action-btn" onclick="deletePost(${post.id})" style="border-color:#ff8787; color:#e03131;">
-                      🗑️ Delete
+                       Delete
                       </button>
                      ` : ''}
                     </div>
@@ -445,7 +445,7 @@
             }
             container.innerHTML = `
                 <div class="mb-2">
-                    <span class="section-label all">🔍 ${filtered.posts.length} result${filtered.posts.length > 1 ? 's' : ''} for "${query}"</span>
+                    <span class="section-label all"> ${filtered.posts.length} result${filtered.posts.length > 1 ? 's' : ''} for "${query}"</span>
                 </div>
                 ${filtered.posts.map(p => renderPost(p, false)).join('')}
             `;
@@ -637,7 +637,7 @@
                              onmouseover="this.style.background='#fff0f5'"
                              onmouseout="this.style.background='${n.is_read ? 'white' : '#fff8fb'}'">
                             <div style="font-size:0.85rem; color:#333;">
-                                ${n.type === 'comment' ? '💬' : n.type === 'message' ? '✉️' : '💗'}
+                                ${n.type === 'comment' ? '' : n.type === 'message' ? '' : '💗'}
                                 ${n.message}
                                 ${!n.is_read ? '<span style="width:7px;height:7px;background:#ff6b9d;border-radius:50%;display:inline-block;margin-left:5px;"></span>' : ''}
                             </div>

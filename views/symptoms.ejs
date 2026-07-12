@@ -113,7 +113,7 @@
 
     <!-- Header -->
     <div class="page-header">
-        <h3>🤖 AI Symptom Checker</h3>
+        <h3> AI Symptom Checker</h3>
         <p>Describe how you feel and get instant guidance</p>
     </div>
 
@@ -217,12 +217,12 @@
                         <p>${data.response}</p>
                         ${data.risk_level === 'high' ? `
                             <a href="/sos" class="btn btn-danger rounded-pill mt-2">
-                                🚨 Get Emergency Help Now
+                                 Get Emergency Help Now
                             </a>
                         ` : ''}
                         ${data.risk_level === 'medium' ? `
                             <a href="/clinics" class="btn btn-warning rounded-pill mt-2">
-                                📍 Find a Clinic Near You
+                                 Find a Clinic Near You
                             </a>
                         ` : ''}
                     </div>

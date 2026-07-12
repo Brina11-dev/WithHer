@@ -122,7 +122,6 @@
             <!-- Symptom Checker -->
             <div class="col-6 col-md-4">
                 <a href="/symptoms" class="feature-card card-symptom">
-                    <div class="feature-icon">🤖</div>
                     <h5>Symptom Checker</h5>
                     <p>Check your symptoms with AI</p>
                 </a>
@@ -131,7 +130,6 @@
             <!-- Education Hub -->
             <div class="col-6 col-md-4">
                 <a href="/education" class="feature-card card-education">
-                    <div class="feature-icon">📚</div>
                     <h5>Education Hub</h5>
                     <p>Learn about your health</p>
                 </a>
@@ -140,7 +138,6 @@
             <!-- Clinic Locator -->
             <div class="col-6 col-md-4">
                 <a href="/sos" class="feature-card card-clinic">
-                    <div class="feature-icon">🚑🏥</div>
                     <h5>Find a Clinic</h5>
                     <p>Locate nearby facilities</p>
                 </a>
@@ -149,7 +146,6 @@
             <!-- Forum -->
             <div class="col-6 col-md-4">
                 <a href="/forum" class="feature-card card-forum">
-                    <div class="feature-icon">💬</div>
                     <h5>Community</h5>
                     <p>Talk anonymously with others</p>
                 </a>
@@ -158,7 +154,6 @@
             <!-- Health Tips -->
             <div class="col-6 col-md-4">
                 <a href="/tips" class="feature-card card-education">
-                    <div class="feature-icon">💡</div>
                     <h5>Health Tips</h5>
                     <p>Daily reproductive health tips</p>
                 </a>
@@ -167,7 +162,6 @@
             <!-- My History -->
             <div class="col-6 col-md-4">
                 <a href="/history" class="feature-card card-symptom">
-                    <div class="feature-icon">📋</div>
                     <h5>My History</h5>
                     <p>View past symptom checks</p>
                 </a>
@@ -179,7 +173,7 @@
         <div class="text-center mt-5 mb-5">
             <p class="text-muted mb-3">In an emergency?</p>
             <a href="/sos" class="btn sos-btn">
-                🚨 Emergency SOS
+                 Emergency SOS
             </a>
         </div>
 
@@ -267,7 +261,7 @@
                          onmouseover="this.style.background='#fff0f5'"
                          onmouseout="this.style.background='${n.is_read ? 'white' : '#fff8fb'}'">
                         <div style="font-size:0.85rem; color:#333;">
-                            ${n.type === 'comment' ? '💬' : n.type === 'message' ? '✉️' : '💗'}
+                            ${n.type === 'comment' ? '' : n.type === 'message' ? '' : '💗'}
                             ${n.message}
                             ${!n.is_read ? '<span style="width:7px;height:7px;background:#ff6b9d;border-radius:50%;display:inline-block;margin-left:5px;"></span>' : ''}
                         </div>

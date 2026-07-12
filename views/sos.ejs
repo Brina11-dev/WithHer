@@ -101,7 +101,7 @@
     </nav>
 
     <div class="page-header">
-        <h3>🚨 Emergency SOS</h3>
+        <h3> Emergency SOS</h3>
         <p>One tap. We alert your emergency contacts.</p>
     </div>
 
@@ -112,7 +112,6 @@
             <p class="text-muted mb-3">Press and hold for 2 seconds to send emergency alert</p>
             <button class="sos-btn" id="sosBtn" onmousedown="startSOS()" onmouseup="cancelSOS()"
                 ontouchstart="startSOS()" ontouchend="cancelSOS()">
-                <span class="sos-icon">🚨</span>
                 <span>SOS</span>
                 <span style="font-size: 0.8rem;">EMERGENCY</span>
             </button>
@@ -128,11 +127,11 @@
 
         <!-- Nearby Emergency Facilities -->
         <div class="nearby-facilities">
-            <h6 class="mb-3">🏥 Nearest Emergency Facilities</h6>
+            <h6 class="mb-3"> Nearest Emergency Facilities</h6>
             <div id="facilitiesContainer">
                 <div class="text-center text-muted py-2">
                     <button class="btn btn-outline-danger rounded-pill" onclick="findNearbyFacilities()">
-                        📍 Find Nearest Hospitals
+                         Find Nearest Hospitals
                     </button>
                 </div>
             </div>
@@ -148,7 +147,7 @@
 
         <!-- Add Contact Form -->
         <div class="add-contact-box">
-            <h6 class="mb-3">➕ Add Emergency Contact</h6>
+            <h6 class="mb-3"> Add Emergency Contact</h6>
             <div class="mb-2">
                 <input type="text" class="form-control" id="contactName" placeholder="Full Name" required>
             </div>
@@ -178,7 +177,7 @@
             <p class="text-muted mb-2">Kenya Emergency Numbers</p>
             <a href="tel:999" class="btn btn-danger rounded-pill me-2">📞 999 Police</a>
             <a href="tel:112" class="btn btn-danger rounded-pill me-2">📞 112 Emergency</a>
-            <a href="tel:1199" class="btn btn-warning rounded-pill">🚑 1199 Ambulance</a>
+            <a href="tel:1199" class="btn btn-warning rounded-pill"> 1199 Ambulance</a>
         </div>
 
     </div>
@@ -219,7 +218,7 @@
             const statusBox = document.getElementById('statusBox');
             statusBox.style.display = 'block';
             statusBox.className = 'status-box alert alert-warning';
-            statusBox.innerHTML = '⏳ Sending emergency alert...';
+            statusBox.innerHTML = ' Sending emergency alert...';
 
             try {
                 const response = await fetch('/sos/send', {
