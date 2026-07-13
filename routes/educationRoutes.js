@@ -2,12 +2,10 @@ const express = require('express');
 const router = express.Router();
 const https = require('https');
 
-// GET /education
 router.get('/', (req, res) => {
     res.render('education');
 });
 
-// GET /education/search?query=...
 router.get('/search', async (req, res) => {
     const query = req.query.query || '';
     if (!query) return res.json({ results: [] });
@@ -39,13 +37,11 @@ router.get('/search', async (req, res) => {
     });
 });
 
-// GET /education/recommended
 router.get('/recommended', (req, res) => {
     if (!req.session || !req.session.lastSymptoms) {
         return res.json({ keywords: [] });
     }
 
-    // Map symptom keywords to article IDs
     const symptoms = req.session.lastSymptoms.toLowerCase();
     const keywords = [];
 
@@ -56,7 +52,7 @@ router.get('/recommended', (req, res) => {
     if (symptoms.includes('pain') || symptoms.includes('cramp')) keywords.push(7);
     if (symptoms.includes('sti') || symptoms.includes('infection')) keywords.push(4);
 
-    res.json({ keywords: [...new Set(keywords)] }); // remove duplicates
+    res.json({ keywords: [...new Set(keywords)] }); 
 });
 
 module.exports = router;
