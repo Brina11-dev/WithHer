@@ -7,21 +7,19 @@ require('dotenv').config();
 const app = express();
 const db = require('./config/db');
 
-// Helper to create a notification
 function createNotification(userId, type, message, link) {
     db.query(
         'INSERT INTO notifications (user_id, type, message, link)  VALUES (?, ?, ?, ?)',
         [userId, type, message, link]
     );
 }
-// Make it available across the app
+
 global.createNotification = createNotification;
 
 const fetch = require('node-fetch');
 
 const multer = require('multer');
 
-// Multer storage config
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/uploads/');
@@ -44,13 +42,11 @@ const upload = multer({
     }
 });
 
-// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Session
 app.use(session({
   secret: 'withher-secret-key',
   resave: false,
@@ -58,7 +54,6 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// Auto-login from remember me cookie
 app.use((req, res, next) => {
   if (!req.session.userId && req.cookies.remember_me) {
     const userId = req.cookies.remember_me;
@@ -75,11 +70,9 @@ app.use((req, res, next) => {
   }
 });
 
-// View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Routes
 const authRoutes = require('./routes/authRoutes');
 const symptomRoutes = require('./routes/symptomRoutes');
 const forumRoutes = require('./routes/forumRoutes');
@@ -96,19 +89,16 @@ app.get('/education', (req, res) => {
   res.render('education');
 });
 
-// History route
 app.get('/history', (req, res) => {
   if (!req.session.userId) return res.redirect('/login');
   res.render('history');
 });
 
-
-// Health Tips route
 app.get('/tips', (req, res) => {
   if (!req.session.userId) return res.redirect('/login');
   res.render('tips');
 });
-// History data route
+
 app.get('/history/data', (req, res) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
   const db = require('./config/db');
@@ -122,7 +112,6 @@ app.get('/history/data', (req, res) => {
   );
 });
 
-// Profile route
 app.get('/profile', (req, res) => {
     if (!req.session.userId) return res.redirect('/login');
     const db = require('./config/db');
@@ -148,7 +137,6 @@ app.get('/profile', (req, res) => {
     });
 });
 
-// Home route
 app.get('/', (req, res) => {
   if (req.session.userId) {
     res.redirect('/dashboard');
@@ -157,13 +145,11 @@ app.get('/', (req, res) => {
   }
 });
 
-// Dashboard route
 app.get('/dashboard', (req, res) => {
   if (!req.session.userId) return res.redirect('/login');
   res.render('dashboard', { userName: req.session.userName });
 });
 
-// Education search route (Wikipedia - biased toward health sources)
 app.get('/education/search', async (req, res) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -171,7 +157,6 @@ app.get('/education/search', async (req, res) => {
   if (!query) return res.json({ results: [] });
 
   try {
-    // Search Wikipedia with health-focused terms
     const searchQuery = encodeURIComponent(query + ' women health medical');
     const wikiRes = await fetch(
       `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${searchQuery}&format=json&srlimit=3&origin=*`
@@ -186,7 +171,6 @@ app.get('/education/search', async (req, res) => {
       source: 'Wikipedia'
     }));
 
-    // Trusted health sources - static curated links per topic
     const trustedSources = getTrustedSources(query);
 
     const results = [...trustedSources, ...wikiResults];
@@ -270,7 +254,7 @@ function getTrustedSources(query) {
 
   return sources;
 }
-// Education recommendations route
+
 app.get('/education/recommended', (req, res) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
   
@@ -315,20 +299,17 @@ const { Server } = require('socket.io');
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Track online users: { userId: socketId }
 const onlineUsers = {};
 
 io.on('connection', (socket) => {
-    // User comes online
+
     socket.on('user_online', (userId) => {
         onlineUsers[userId] = socket.id;
     });
 
-    // Send a DM
 socket.on('send_message', async (data) => {
     const { senderId, receiverId, content } = data;
 
-    // Save to DB
     db.query(
         'INSERT INTO messages (sender_id, receiver_id, content) VALUES (?, ?, ?)',
         [senderId, receiverId, content],
@@ -344,15 +325,12 @@ socket.on('send_message', async (data) => {
                 is_read: 0
             };
 
-            // If receiver is online, deliver instantly
             if (onlineUsers[receiverId]) {
                 io.to(onlineUsers[receiverId]).emit('receive_message', message);
             }
 
-            // Always confirm back to sender
             socket.emit('message_sent', message);
 
-            // Notify receiver
             db.query('SELECT full_name FROM users WHERE id = ?', [senderId], (err, users) => {
                 const senderName = users && users[0] ? users[0].full_name : 'Someone';
                 global.createNotification(
@@ -366,7 +344,6 @@ socket.on('send_message', async (data) => {
     );
 });
 
-    // Mark messages as read
     socket.on('mark_read', (data) => {
         const { senderId, receiverId } = data;
         db.query(
@@ -375,7 +352,6 @@ socket.on('send_message', async (data) => {
         );
     });
 
-    // User goes offline
     socket.on('disconnect', () => {
         for (const [userId, sockId] of Object.entries(onlineUsers)) {
             if (sockId === socket.id) {
@@ -386,7 +362,6 @@ socket.on('send_message', async (data) => {
     });
 });
 
-// Message routes
 app.get('/messages/history/:otherUserId', (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -409,7 +384,6 @@ app.get('/messages/history/:otherUserId', (req, res) => {
     });
 });
 
-// Get unread message count
 app.get('/messages/unread', (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -433,7 +407,6 @@ app.get('/messages', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/messages.html'));
 });
 
-// Get all conversations for a user
 app.get('/messages/conversations', (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -456,7 +429,6 @@ app.get('/messages/conversations', (req, res) => {
     });
 });
 
-// Get all notifications for logged in user
 app.get('/notifications', (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -470,7 +442,6 @@ app.get('/notifications', (req, res) => {
     );
 });
 
-// Get unread notification count
 app.get('/notifications/unread', (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -484,7 +455,6 @@ app.get('/notifications/unread', (req, res) => {
     );
 });
 
-// Mark all notifications as read
 app.get('/notifications/mark-read', (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
