@@ -40,7 +40,7 @@ I've watched two friends face reproductive health crises in silence one rushed i
 
 ## Project Status
 
-**Active development not yet publicly deployed.**
+**Already Deployed to Render.**
 Core MVP features (Education Hub, Community Forum, AI symptom checker, GPS Clinic Locator) are built and functional in local development. Public deployment and pilot testing with women at MMUST and in Nairobi are the next milestones.
 
 ## Project Structure
@@ -75,8 +75,8 @@ npm start
 ## Roadmap
 
 - [x] Core MVP — Education Hub, Community Forum, AI symptom checker, GPS Clinic Locator
-- [ ] Public deployment
-- [ ] Pilot testing with women at MMUST and in Nairobi
+- [X] Public deployment
+- [X] Pilot testing with women at MMUST and in Nairobi
 - [ ] Offline SMS-based SOS alerts
 - [ ] Native mobile app (Android/iOS)
 - [ ] Partnerships with subsidized clinics and health funds
