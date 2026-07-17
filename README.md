@@ -41,7 +41,7 @@ I've watched two friends face reproductive health crises in silence one rushed i
 ## Project Status
 
 **Already Deployed to Render.**
-Core MVP features (Education Hub, Community Forum, AI symptom checker, GPS Clinic Locator) are built and functional in local development. Public deployment and pilot testing with women at MMUST and in Nairobi are the next milestones.
+Core MVP features (Education Hub, Community Forum, AI symptom checker, GPS Clinic Locator) are built and functional in local development. Currently doing Pilot Testing with women at MMUST .
 
 ## Project Structure
 
