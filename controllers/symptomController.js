@@ -50,8 +50,11 @@ const checkSymptoms = async (req, res) => {
 
     const content = response.choices[0].message.content;
     console.log(' Raw Groq response:', content);
+
+    let raw = response.choices[0].message.content;
+    raw = raw.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    const parsed = JSON.parse(raw);
     
-    const parsed = JSON.parse(content);
     console.log('Parsed response:', parsed);
 
     db.query(
