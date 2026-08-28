@@ -13,8 +13,8 @@ const db = mysql.createPool({
 });
 
 db.query('SELECT 1', (err) => {
-  if (err) console.log('❌ Database connection failed:', err);
-  else console.log('✅ Connected to WithHer database');
+  if (err) console.log(' Database connection failed:', err);
+  else console.log(' Connected to WithHer database');
 });
 
 module.exports = db;

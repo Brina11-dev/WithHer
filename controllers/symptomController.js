@@ -5,13 +5,11 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY
 });
 
-// Show symptom checker page
 const showSymptoms = (req, res) => {
   if (!req.session.userId) return res.redirect('/login');
   res.render('symptoms');
 };
 
-// Handle symptom check
 const checkSymptoms = async (req, res) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -19,7 +17,7 @@ const checkSymptoms = async (req, res) => {
 
   try {
     const response = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model: "qwen/qwen3.6-27b",
       messages: [
         {
           role: 'system',
@@ -51,12 +49,11 @@ const checkSymptoms = async (req, res) => {
     });
 
     const content = response.choices[0].message.content;
-    console.log('🔍 Raw Groq response:', content);
+    console.log(' Raw Groq response:', content);
     
     const parsed = JSON.parse(content);
-    console.log('✅ Parsed response:', parsed);
+    console.log('Parsed response:', parsed);
 
-    // Save to database
     db.query(
       'INSERT INTO symptom_checks (user_id, symptoms, ai_response, risk_level) VALUES (?, ?, ?, ?)',
       [req.session.userId, symptoms, parsed.response, parsed.risk_level],
@@ -68,7 +65,7 @@ const checkSymptoms = async (req, res) => {
     res.json(parsed);
 
   } catch (err) {
-    console.error('❌ Groq API Error:', err.message);
+    console.error('Groq API Error:', err.message);
     console.error('Full error:', err);
     res.status(500).json({ error: `AI service error: ${err.message}` });
   }
