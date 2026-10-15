@@ -159,31 +159,26 @@
 </div>
 
 <script>
-    // Get current user from session via API
     let currentUserId = null;
     let currentReceiverId = null;
     let currentReceiverName = '';
     let socket = null;
 
     async function init() {
-        // Get current user id
         const res = await fetch('/auth/me');
         if (res.status === 401) return window.location.href = '/login';
         const user = await res.json();
         currentUserId = user.id;
 
-        // Connect socket
         socket = io();
         socket.emit('user_online', currentUserId);
 
         socket.on('receive_message', (message) => {
-            // If chat with this sender is open, show message immediately
             if (message.sender_id == currentReceiverId) {
                 appendMessage(message, false);
                 scrollToBottom();
                 socket.emit('mark_read', { senderId: message.sender_id, receiverId: currentUserId });
             }
-            // Refresh conversations to update preview
             loadConversations();
         });
 
@@ -192,7 +187,6 @@
             scrollToBottom();
         });
 
-        // Check if we should open a specific conversation (from forum)
         const params = new URLSearchParams(window.location.search);
         const openUserId = params.get('userId');
         const openUserName = params.get('name');
@@ -232,23 +226,20 @@
         currentReceiverId = userId;
         currentReceiverName = userName;
 
-        // Update UI
         document.getElementById('noChatSelected').style.display = 'none';
         const activeArea = document.getElementById('activeChatArea');
         activeArea.style.display = 'flex';
         document.getElementById('chatHeader').innerHTML = `💗 ${userName}`;
         document.getElementById('chatMessages').innerHTML = '';
 
-        // Mark active in sidebar
         document.querySelectorAll('.conversation-item').forEach(el => el.classList.remove('active'));
 
-        // Load history
+
         const res = await fetch(`/messages/history/${userId}`);
         const messages = await res.json();
         messages.forEach(m => appendMessage(m, m.sender_id == currentUserId));
         scrollToBottom();
 
-        // Mark as read
         socket.emit('mark_read', { senderId: userId, receiverId: currentUserId });
         loadConversations();
     }
