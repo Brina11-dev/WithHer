@@ -107,7 +107,6 @@
 
     <div class="container mt-4 pb-5">
 
-        <!-- SOS Button -->
         <div class="text-center mb-4">
             <p class="text-muted mb-3">Press and hold for 2 seconds to send emergency alert</p>
             <button class="sos-btn" id="sosBtn" onmousedown="startSOS()" onmouseup="cancelSOS()"
@@ -122,10 +121,8 @@
             </div>
         </div>
 
-        <!-- Status Box -->
         <div class="status-box alert" id="statusBox"></div>
 
-        <!-- Nearby Emergency Facilities -->
         <div class="nearby-facilities">
             <h6 class="mb-3"> Nearest Emergency Facilities</h6>
             <div id="facilitiesContainer">
@@ -137,15 +134,13 @@
             </div>
         </div>
 
-        <!-- Emergency Contacts -->
         <div class="add-contact-box">
             <h6 class="mb-3">👥 My Emergency Contacts</h6>
             <div id="contactsList">
                 <p class="text-muted text-center">Loading contacts...</p>
             </div>
         </div>
-
-        <!-- Add Contact Form -->
+ 
         <div class="add-contact-box">
             <h6 class="mb-3"> Add Emergency Contact</h6>
             <div class="mb-2">
@@ -172,7 +167,6 @@
             </button>
         </div>
 
-        <!-- Call Emergency Services -->
         <div class="text-center mt-3">
             <p class="text-muted mb-2">Kenya Emergency Numbers</p>
             <a href="tel:999" class="btn btn-danger rounded-pill me-2">📞 999 Police</a>
@@ -187,10 +181,8 @@
         let sosTimer = null;
         let userLocation = null;
 
-        // Load contacts on page load
         window.onload = loadContacts;
 
-        // Get user location
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 pos => { userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude }; },
@@ -231,14 +223,14 @@
 
                 if (data.success) {
                     statusBox.className = 'status-box alert alert-success';
-                    statusBox.innerHTML = `✅ Emergency alert sent to ${data.contactsNotified} contact(s)! Stay calm — help is on the way.`;
+                    statusBox.innerHTML = `Emergency alert sent to ${data.contactsNotified} contact(s)! Stay calm — help is on the way.`;
                 } else {
                     statusBox.className = 'status-box alert alert-danger';
-                    statusBox.innerHTML = '❌ Could not send alert. Please call 999 or 112 directly.';
+                    statusBox.innerHTML = ' Could not send alert. Please call 999 or 112 directly.';
                 }
             } catch(err) {
                 statusBox.className = 'status-box alert alert-danger';
-                statusBox.innerHTML = '❌ Could not send alert. Please call 999 or 112 directly.';
+                statusBox.innerHTML = ' Could not send alert. Please call 999 or 112 directly.';
             }
         }
 

@@ -1,6 +1,5 @@
 const db = require('../config/db');
 
-
 const showSOS = (req, res) => {
     if (!req.session.userId) return res.redirect('/login');
     res.render('sos');
@@ -19,7 +18,6 @@ const getContacts = (req, res) => {
     );
 };
 
-
 const addContact = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -35,7 +33,6 @@ const addContact = (req, res) => {
     );
 };
 
-
 const deleteContact = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -50,7 +47,6 @@ const deleteContact = (req, res) => {
         }
     );
 };
-
 
 const sendSOS = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
