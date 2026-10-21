@@ -1,7 +1,7 @@
 const db = require('../config/db');
 const bcrypt = require('bcryptjs');
 
-// Show register page
+
 const showRegister = (req, res) => {
   res.render('register', { error: null });
 };
@@ -9,7 +9,7 @@ const showRegister = (req, res) => {
 const register = (req, res) => {
   const { full_name, phone, email, password, confirm_password, age, county, remember_me } = req.body;
 
-  // Server-side validation
+  
   if (!/^[a-zA-Z\s]{2,}$/.test(full_name)) {
     return res.render('register', { error: 'Name must contain letters only' });
   }
@@ -23,7 +23,7 @@ const register = (req, res) => {
     return res.render('register', { error: 'Passwords do not match' });
   }
 
-  // Check if phone already exists
+  
   db.query('SELECT * FROM users WHERE phone = ?', [phone], (err, results) => {
     if (err) return res.render('register', { error: 'Something went wrong' });
     if (results.length > 0) {
@@ -54,16 +54,16 @@ const register = (req, res) => {
   });
 };
 
-// Show login page
+
 const showLogin = (req, res) => {
   res.render('login', { error: null });
 };
 
-// Handle login form
+
 const login = (req, res) => {
   const { phone, password, remember_me } = req.body;
 
-  // Find user by phone
+  
   db.query('SELECT * FROM users WHERE phone = ?', [phone], (err, results) => {
     if (err) return res.render('login', { error: 'Something went wrong' });
 
@@ -73,19 +73,19 @@ const login = (req, res) => {
 
     const user = results[0];
 
-    // Check password
+
     const passwordMatch = bcrypt.compareSync(password, user.password);
     if (!passwordMatch) {
       return res.render('login', { error: 'Incorrect password' });
     }
 
-    // Save session
+    
     req.session.userId = user.id;
     req.session.userName = user.full_name;
     req.session.isAdmin = user.is_admin === 1;
 
 
-    // Remember me cookie
+    
     if (remember_me) {
       res.cookie('remember_me', user.id, { maxAge: 30 * 24 * 60 * 60 * 1000 });
     }
@@ -93,8 +93,6 @@ const login = (req, res) => {
     res.redirect('/dashboard');
   });
 };
-
-// Logout
 const logout = (req, res) => {
   req.session.destroy();
   res.clearCookie('remember_me');
