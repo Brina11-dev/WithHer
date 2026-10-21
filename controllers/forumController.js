@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 
-// Helper: extract health keywords from symptom text
+
 function extractKeywords(text) {
     if (!text) return [];
     const t = text.toLowerCase();
@@ -30,22 +30,22 @@ function extractKeywords(text) {
     return found;
 }
 
-// Show forum page
+
 const showForum = (req, res) => {
     if (!req.session.userId) return res.redirect('/login');
    res.render('forum', { userId: req.session.userId, isAdmin: req.session.isAdmin || false });
 };
 
-// Get all posts + symptom-matched posts at top
+
 const getPosts = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
-    // Fetch user's latest symptom check first
+    
     db.query(
         'SELECT symptoms, ai_response FROM symptom_checks WHERE user_id = ? ORDER BY created_at DESC LIMIT 1',
         [req.session.userId],
         (err, symptomResults) => {
-            // Get all posts regardless
+            
             db.query(`
                 SELECT fp.id, fp.user_id, fp.content, fp.is_anonymous, fp.created_at, fp.likes, fp.tags, fp.media_url, fp.media_type, u.full_name
                 FROM forum_posts fp
@@ -54,7 +54,7 @@ const getPosts = (req, res) => {
             `, (err, posts) => {
                 if (err) return res.status(500).json({ error: 'Could not load posts' });
 
-                // If no symptom history, just return all posts normally
+                
                 if (!symptomResults || symptomResults.length === 0) {
                     return res.json({ posts, relatedPosts: [], userTags: [] });
                 }
@@ -62,7 +62,7 @@ const getPosts = (req, res) => {
                 const symptomText = symptomResults[0].symptoms + ' ' + symptomResults[0].ai_response;
                 const userTags = extractKeywords(symptomText);
 
-                // Find posts whose tags overlap with user's symptom tags
+                
                 const relatedPosts = posts.filter(post => {
                     if (!post.tags) return false;
                     const postTags = post.tags.split(',').map(t => t.trim());
@@ -81,19 +81,19 @@ const deletePost = (req, res) => {
     const { id } = req.params;
     const userId = req.session.userId;
 
-    // Step 1: fetch the post first — need media_url AND user_id
+    
     db.query('SELECT user_id, media_url FROM forum_posts WHERE id = ?', [id], (err, results) => {
         if (err) return res.status(500).json({ error: 'Error' });
         if (results.length === 0) return res.status(404).json({ error: 'Post not found' });
 
         const post = results[0];
 
-        // Step 2: ownership check
+        
         if (post.user_id !== userId && !req.session.isAdmin) {
             return res.status(403).json({ error: 'Not your post' });
         }
 
-        // Step 3: delete child rows first — comments, then likes
+        
         db.query('DELETE FROM comments WHERE post_id = ?', [id], (err) => {
             if (err) return res.status(500).json({ error: 'Error' });
 
@@ -120,14 +120,14 @@ const deletePost = (req, res) => {
     });
 };
 
-// Like/unlike a post (toggle) + track who liked
+
 const likePost = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
     const { id } = req.params;
     const userId = req.session.userId;
 
-    // Check if already liked
+    
     db.query(
         'SELECT id FROM post_likes WHERE post_id = ? AND user_id = ?',
         [id, userId],
@@ -135,7 +135,7 @@ const likePost = (req, res) => {
             if (err) return res.status(500).json({ error: 'Error' });
 
             if (existing.length > 0) {
-                // Already liked — unlike it
+                
                 db.query('DELETE FROM post_likes WHERE post_id = ? AND user_id = ?', [id, userId], (err) => {
                     if (err) return res.status(500).json({ error: 'Error' });
 
@@ -148,7 +148,7 @@ const likePost = (req, res) => {
                     });
                 });
             } else {
-                // Not liked yet — like it
+                
                 db.query('INSERT INTO post_likes (post_id, user_id) VALUES (?, ?)', [id, userId], (err) => {
                     if (err) return res.status(500).json({ error: 'Error' });
 
@@ -160,7 +160,7 @@ const likePost = (req, res) => {
 
                             res.json({ success: true, likes: results[0].likes, liked: true });
 
-                            // Notify post owner
+                            
                             db.query('SELECT user_id FROM forum_posts WHERE id = ?', [id], (err, posts) => {
                                 if (!err && posts.length > 0 && posts[0].user_id !== userId) {
                                     db.query('SELECT full_name FROM users WHERE id = ?', [userId], (err, users) => {
@@ -183,7 +183,7 @@ const likePost = (req, res) => {
     );
 };
 
-// Get who liked a post
+
 const getPostLikes = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -203,7 +203,6 @@ const getPostLikes = (req, res) => {
 };
 
 
-// Get comments for a post
 const getComments = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -247,10 +246,10 @@ const addComment = (req, res) => {
 
                 const comment = rows[0];
 
-                // Send response FIRST
+                
                 res.json({ success: true, comment });
 
-                // THEN handle notification (after response is sent)
+            
                 if (comment.post_owner_id !== req.session.userId) {
                     const commenterName = comment.is_anonymous ? 'Someone' : comment.full_name;
                     global.createNotification(
