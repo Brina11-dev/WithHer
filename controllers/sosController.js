@@ -1,12 +1,11 @@
 const db = require('../config/db');
 
-// Show SOS page
+
 const showSOS = (req, res) => {
     if (!req.session.userId) return res.redirect('/login');
     res.render('sos');
 };
 
-// Get emergency contacts
 const getContacts = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -20,7 +19,7 @@ const getContacts = (req, res) => {
     );
 };
 
-// Add emergency contact
+
 const addContact = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -36,7 +35,7 @@ const addContact = (req, res) => {
     );
 };
 
-// Delete emergency contact
+
 const deleteContact = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
@@ -52,13 +51,13 @@ const deleteContact = (req, res) => {
     );
 };
 
-// Send SOS alert
+
 const sendSOS = (req, res) => {
     if (!req.session.userId) return res.status(401).json({ error: 'Not logged in' });
 
     const { location } = req.body;
 
-    // Get user details and contacts
+    
     db.query(
         'SELECT u.full_name, u.phone FROM users u WHERE u.id = ?',
         [req.session.userId],
@@ -80,19 +79,19 @@ const sendSOS = (req, res) => {
                         });
                     }
 
-                    // Build location message
+                    
                     let locationText = 'Location unknown';
                     if (location && location.lat && location.lng) {
                         locationText = `https://maps.google.com/?q=${location.lat},${location.lng}`;
                     }
 
-                    // Log the SOS alert (SMS would be sent here with Africa's Talking)
+                    
                     console.log(`🚨 SOS ALERT from ${user.full_name} (${user.phone})`);
                     console.log(`Location: ${locationText}`);
                     console.log(`Contacts to notify: ${contacts.map(c => c.phone).join(', ')}`);
 
-                    // For now respond with success
-                    // Africa's Talking SMS integration can be added later
+                    
+                
                     res.json({
                         success: true,
                         contactsNotified: contacts.length,
