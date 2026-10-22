@@ -282,6 +282,10 @@
                     document.getElementById('contactRelationship').value = '';
                     loadContacts();
                 }
+
+                else {
+                  alert(data.error || 'Could not add contact');
+                     }
             } catch(err) {
                 alert('Could not add contact. Please try again.');
             }

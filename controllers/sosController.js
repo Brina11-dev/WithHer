@@ -1,4 +1,5 @@
 const db = require('../config/db');
+  const { normalizeKenyanPhone } = require('../utils/phone');
 
 const showSOS = (req, res) => {
     if (!req.session.userId) return res.redirect('/login');
@@ -23,9 +24,18 @@ const addContact = (req, res) => {
 
     const { name, phone, relationship } = req.body;
 
+    if (!name || !name.trim()) {
+        return res.status(400).json({ error: 'Please enter a name' });
+    }
+
+    const normalizedPhone = normalizeKenyanPhone(phone);
+    if (!normalizedPhone) {
+        return res.status(400).json({ error: 'Enter a valid Kenyan phone number' });
+    }
+
     db.query(
         'INSERT INTO emergency_contacts (user_id, name, phone, relationship) VALUES (?, ?, ?, ?)',
-        [req.session.userId, name, phone, relationship],
+        [req.session.userId, name.trim(), normalizedPhone, relationship],
         (err, result) => {
             if (err) return res.status(500).json({ error: 'Could not add contact' });
             res.json({ success: true, id: result.insertId });
@@ -82,7 +92,7 @@ const sendSOS = (req, res) => {
                     }
 
                     
-                    console.log(`🚨 SOS ALERT from ${user.full_name} (${user.phone})`);
+                    console.log(`SOS ALERT from ${user.full_name} (${user.phone})`);
                     console.log(`Location: ${locationText}`);
                     console.log(`Contacts to notify: ${contacts.map(c => c.phone).join(', ')}`);
 
