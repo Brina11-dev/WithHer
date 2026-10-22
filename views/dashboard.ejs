@@ -81,7 +81,7 @@
 </head>
 <body>
 
-    <!-- Navbar -->
+    
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand">WithHer 💗</a>
@@ -109,17 +109,17 @@
         </div>
     </nav>
 
-    <!-- Welcome Section -->
+    
     <div class="welcome-section text-center">
         <h2>Hello, <%= userName %> 💗</h2>
         <p>You are not alone. WithHer is here for you.</p>
     </div>
 
-    <!-- Features Grid -->
+    
     <div class="container mt-4">
         <div class="row g-4">
 
-            <!-- Symptom Checker -->
+            
             <div class="col-6 col-md-4">
                 <a href="/symptoms" class="feature-card card-symptom">
                     <h5>Symptom Checker</h5>
@@ -127,7 +127,7 @@
                 </a>
             </div>
 
-            <!-- Education Hub -->
+            
             <div class="col-6 col-md-4">
                 <a href="/education" class="feature-card card-education">
                     <h5>Education Hub</h5>
@@ -135,7 +135,7 @@
                 </a>
             </div>
 
-            <!-- Clinic Locator -->
+            
             <div class="col-6 col-md-4">
                 <a href="/sos" class="feature-card card-clinic">
                     <h5>Find a Clinic</h5>
@@ -143,7 +143,7 @@
                 </a>
             </div>
 
-            <!-- Forum -->
+        
             <div class="col-6 col-md-4">
                 <a href="/forum" class="feature-card card-forum">
                     <h5>Community</h5>
@@ -151,7 +151,7 @@
                 </a>
             </div>
 
-            <!-- Health Tips -->
+            
             <div class="col-6 col-md-4">
                 <a href="/tips" class="feature-card card-education">
                     <h5>Health Tips</h5>
@@ -159,7 +159,7 @@
                 </a>
             </div>
 
-            <!-- My History -->
+            
             <div class="col-6 col-md-4">
                 <a href="/history" class="feature-card card-symptom">
                     <h5>My History</h5>
@@ -169,7 +169,7 @@
 
         </div>
 
-        <!-- Emergency SOS Button -->
+        
         <div class="text-center mt-5 mb-5">
             <p class="text-muted mb-3">In an emergency?</p>
             <a href="/sos" class="btn sos-btn">
@@ -180,7 +180,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Notification Dropdown -->
+    
 <div id="notifDropdown" style="
     display: none;
     position: fixed;
@@ -207,7 +207,7 @@
 <script>
     let notifOpen = false;
 
-    // Check unread count every 30 seconds
+    
     checkUnread();
     setInterval(checkUnread, 30000);
 
@@ -233,7 +233,7 @@
         if (notifOpen) await loadNotifications();
     }
 
-    // Close dropdown when clicking outside
+    
     document.addEventListener('click', (e) => {
         const dropdown = document.getElementById('notifDropdown');
         if (notifOpen && !dropdown.contains(e.target) && !e.target.closest('.nav-link')) {
@@ -272,7 +272,7 @@
                 </a>
             `).join('');
 
-            // Mark as read after viewing
+            
             await fetch('/notifications/mark-read');
             document.getElementById('notif-badge').style.display = 'none';
 
